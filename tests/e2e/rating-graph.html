@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script src="https://codeforces.com/codeforces.org/s/99446/js/jquery-1.8.3.js"></script>
+<script src="https://codeforces.com/codeforces.org/s/99446/js/jquery.flot.min.js"></script>
+<script src="https://codeforces.com/codeforces.org/s/99446/js/jquery.flot.time.min.js"></script>
+<script src="https://codeforces.com/codeforces.org/s/99446/js/jquery.flot.navigate.min.js"></script>
+</head><body>
+<div class="roundbox" style="width:900px"><div id="usersRatingGraphPlaceholder" style="width: 100%; height: 300px;"></div></div>
+<script>
+$(function () {
+  var data = [[1726331700000,362],[1741712700000,1223],[1760288700000,1412],[1781283900000,1632]];
+  var markings = [
+    { color: '#a00', lineWidth: 1, yaxis: { from: 3000 } },
+    { color: '#f8f', lineWidth: 1, yaxis: { from: 1900, to: 2099 } },
+    { color: '#aaf', lineWidth: 1, yaxis: { from: 1600, to: 1899 } },
+    { color: '#77ddbb', lineWidth: 1, yaxis: { from: 1400, to: 1599 } },
+    { color: '#7f7', lineWidth: 1, yaxis: { from: 1200, to: 1399 } },
+    { color: '#ccc', lineWidth: 1, yaxis: { from: 0, to: 1199 } },
+  ];
+  $.plot($("#usersRatingGraphPlaceholder"), [{ label: "SkywalkerX", data: data }], {
+    lines: { show: true }, points: { show: true }, xaxis: { mode: "time" },
+    yaxis: { min: 262, max: 2000, ticks: [1200, 1400, 1600, 1900] }, grid: { hoverable: true, markings: markings } });
+});
+</script></body></html>
