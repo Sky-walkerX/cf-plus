@@ -1,0 +1,41 @@
+/* CF wraps datatables in an inline #E1E1E1 frame with image corners. */
+.datatable { background-color: var(--cfx-border) !important; border-radius: 8px; }
+.datatable > div { background-color: transparent !important; }
+.datatable .lt, .datatable .rt, .datatable .lb, .datatable .rb, .datatable .ilt, .datatable .irt { display: none !important; }
+.datatable table { background-color: var(--cfx-surface) !important; }
+.datatable td, .datatable th { border-color: var(--cfx-border) !important; color: var(--cfx-text); }
+.datatable th { background-color: var(--cfx-head) !important; }
+.datatable .dark, .datatable tr.dark td { background-color: var(--cfx-surface-2) !important; }
+.datatable-caption-label { border-color: var(--cfx-border-strong) !important; }
+
+.problems .accepted-problem td.act { background-color: var(--cfx-row-ok) !important; }
+.problems .accepted-problem td.id { border-left-color: var(--cfx-ok) !important; }
+.problems .rejected-problem td.act { background-color: var(--cfx-row-bad) !important; }
+.problems .rejected-problem td.id { border-left-color: var(--cfx-bad) !important; }
+.problems .submitted-verdict-problem td.act { background-color: var(--cfx-row-info) !important; }
+.problems .submitted-verdict-problem td.id { border-left-color: var(--cfx-accent) !important; }
+
+.highlighted-row td, .highlighted-row th { background-color: var(--cfx-row-info) !important; }
+
+/* Standings */
+.standings td, .standings th { border-color: var(--cfx-border) !important; }
+.standings tr.dark td, .standings .dark { background-color: var(--cfx-surface-2) !important; }
+.standings tr.highlighted-row td { background-color: var(--cfx-row-info) !important; }
+.cell-accepted, .cell-passed-system-test, .cell-challenged { color: var(--cfx-ok) !important; }
+.cell-rejected, .cell-failed-system-test { color: var(--cfx-bad) !important; }
+.cell-time, .cell-penalty { color: var(--cfx-text-muted) !important; }
+.successfulChallengeCount { color: var(--cfx-ok) !important; }
+.unsuccessfulChallengeCount { color: var(--cfx-bad) !important; }
+td.first-solved, td.firstSolved { background-color: rgb(76 199 106 / 0.28) !important; }
+
+/* Verdicts */
+.verdict-accepted, .verdict-accepted-challenged, .verdict-successful-challenge { color: var(--cfx-ok) !important; }
+.verdict-rejected, .verdict-unsuccessful-challenge, .verdict-failed { color: var(--cfx-bad) !important; }
+.verdict-waiting { color: var(--cfx-text-muted) !important; }
+
+.pagination a, .pagination .arrow { color: var(--cfx-text) !important; }
+.pagination .inactive { color: var(--cfx-text-faint) !important; }
+.pagination span.active { background-color: var(--cfx-surface-3) !important; border-color: var(--cfx-border-strong) !important; }
+
+.table-form .submit:not(:disabled) { color: var(--cfx-text) !important; }
+.file .text { background-color: var(--cfx-surface-3) !important; }

@@ -1,0 +1,25 @@
+#header { background: transparent !important; }
+#header img[src*='codeforces-logo'],
+#header img[src*='codeforces-sponsored'] {
+  /* Black wordmark → light, coloured bars keep roughly their hue. */
+  filter: invert(1) hue-rotate(180deg) brightness(1.1);
+  mix-blend-mode: lighten;
+}
+.lang-chooser, .lang-chooser a { color: var(--cfx-text-muted) !important; }
+
+.menu-box, .roundbox.menu-box { background: var(--cfx-surface) !important; border-color: var(--cfx-border) !important; }
+.menu-list li a { color: var(--cfx-text) !important; }
+.menu-list li a:hover { color: var(--cfx-link) !important; }
+.menu-list li.current { border-bottom-color: var(--cfx-accent) !important; }
+
+.second-level-menu, .second-level-menu-list { background: transparent !important; }
+.second-level-menu-list li a { color: var(--cfx-text) !important; }
+.second-level-menu-list li.backLava,
+.second-level-menu-list li.backLava .leftLava {
+  background: var(--cfx-surface-3) !important;
+  border-radius: 6px;
+}
+.second-level-menu-list li.current a, .second-level-menu-list li.selectedLava a { color: var(--cfx-text) !important; }
+
+#footer { border-top-color: var(--cfx-border) !important; color: var(--cfx-text-faint); }
+#footer a { color: var(--cfx-text-muted) !important; }

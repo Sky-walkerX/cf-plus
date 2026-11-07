@@ -1,0 +1,22 @@
+.roundbox {
+  background-color: var(--cfx-surface) !important;
+  border-color: var(--cfx-border) !important;
+}
+.roundbox .roundbox-lt, .roundbox .roundbox-rt, .roundbox .roundbox-lb, .roundbox .roundbox-rb,
+.roundbox .lt, .roundbox .rt, .roundbox .lb, .roundbox .rb, .roundbox .ilt, .roundbox .irt {
+  display: none !important;
+}
+.roundbox .caption { color: var(--cfx-caption) !important; }
+.roundbox .titled, .roundbox .bottom-links { border-color: var(--cfx-border) !important; }
+.roundbox .bottom-links, .roundbox .dark { background-color: var(--cfx-surface-2) !important; }
+.roundbox .rtable td, .roundbox .rtable th { border-color: var(--cfx-border) !important; }
+.roundbox .rtable th { background: var(--cfx-surface-2) !important; }
+
+.sidebar-menu ul a { color: var(--cfx-text) !important; }
+.sidebar-menu ul li { border-color: transparent !important; border-radius: 6px; }
+.sidebar-menu ul li:hover { background-color: var(--cfx-surface-3) !important; border-color: var(--cfx-surface-3) !important; }
+.sidebar-menu ul li.active { background-color: var(--cfx-accent-soft) !important; border-color: transparent !important; }
+
+/* Profile user box */
+.userbox, .userbox .info, .title-photo > div { border-color: var(--cfx-border) !important; }
+.userbox .title-photo > div { background: var(--cfx-surface-2); }

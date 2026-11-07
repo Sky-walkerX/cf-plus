@@ -1,0 +1,11 @@
+/* Rank colours per theme (palette tokens). */
+.user-gray { color: var(--cfx-h-gray) !important; }
+.user-green { color: var(--cfx-h-green) !important; }
+.user-cyan { color: var(--cfx-h-cyan) !important; }
+.user-blue { color: var(--cfx-h-blue) !important; }
+.user-violet { color: var(--cfx-h-violet) !important; }
+.user-orange { color: var(--cfx-h-orange) !important; }
+.user-red, .user-legendary { color: var(--cfx-h-red) !important; }
+.user-yellow { color: #e0c341 !important; }
+.user-black, .user-admin, .user-4000 { color: var(--cfx-text) !important; }
+.user-legendary::first-letter, .legendary-user-first-letter { color: var(--cfx-h-legendary) !important; }

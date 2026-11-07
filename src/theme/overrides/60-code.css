@@ -1,0 +1,37 @@
+/* Code: prettify, lstlisting, ttypography code, Ace editor. Palette ≈ GitHub dark. */
+pre, code, .prettyprint, pre.prettyprint, div.ttypography pre, div.ttypography code {
+  background-color: var(--cfx-surface-2) !important;
+  color: #d6dbe1 !important;
+  border-color: var(--cfx-border-strong) !important;
+}
+div.ttypography pre.lstlisting { background-color: var(--cfx-surface-2) !important; }
+div.ttypography .tt { background-color: var(--cfx-surface-2) !important; border-color: var(--cfx-border-strong) !important; }
+div.ttypography kbd, div.ttypography samp, div.ttypography var, div.ttypography tt { color: var(--cfx-text-muted) !important; }
+
+.prettyprint .pln, .lstlisting .pln { color: #d6dbe1 !important; }
+.prettyprint .str, .prettyprint .atv, .lstlisting .str, .lstlisting .atv { color: #a5d6ff !important; }
+.prettyprint .kwd, .prettyprint .tag, .lstlisting .kwd, .lstlisting .tag { color: #ff7b72 !important; }
+.prettyprint .com, .lstlisting .com { color: #8b949e !important; font-style: italic; }
+.prettyprint .typ, .prettyprint .atn, .prettyprint .dec, .prettyprint .var,
+.lstlisting .typ, .lstlisting .atn, .lstlisting .dec, .lstlisting .var { color: #d2a8ff !important; }
+.prettyprint .lit, .lstlisting .lit { color: #79c0ff !important; }
+.prettyprint .pun, .prettyprint .opn, .prettyprint .clo,
+.lstlisting .pun, .lstlisting .opn, .lstlisting .clo { color: #c9d1d9 !important; }
+ol.linenums li { background: transparent !important; color: var(--cfx-text-faint); }
+ol.linenums li.L1, ol.linenums li.L3, ol.linenums li.L5, ol.linenums li.L7, ol.linenums li.L9 { background: rgb(255 255 255 / 0.015) !important; }
+.prettyprint li.highlighted, pre li.highlighted { background: rgb(240 176 74 / 0.16) !important; }
+
+/* Ace editor (submit page, hacks). */
+.ace_editor { background-color: var(--cfx-surface-2) !important; color: #d6dbe1 !important; }
+.ace_editor .ace_gutter { background: var(--cfx-surface) !important; color: var(--cfx-text-faint) !important; }
+.ace_editor .ace_gutter-active-line, .ace_editor .ace_marker-layer .ace_active-line { background: rgb(255 255 255 / 0.05) !important; }
+.ace_editor .ace_cursor { color: #e3e6ea !important; border-left-color: #e3e6ea !important; }
+.ace_editor .ace_marker-layer .ace_selection { background: rgb(122 162 247 / 0.3) !important; }
+.ace_editor .ace_marker-layer .ace_bracket { border-color: var(--cfx-border-strong) !important; }
+.ace_editor .ace_print-margin { background: var(--cfx-border) !important; }
+.ace_editor .ace_keyword, .ace_editor .ace_storage, .ace_editor .ace_meta.ace_tag { color: #ff7b72 !important; }
+.ace_editor .ace_string { color: #a5d6ff !important; }
+.ace_editor .ace_comment { color: #8b949e !important; }
+.ace_editor .ace_constant, .ace_editor .ace_constant.ace_numeric { color: #79c0ff !important; }
+.ace_editor .ace_support, .ace_editor .ace_entity.ace_name.ace_function, .ace_editor .ace_storage.ace_type { color: #d2a8ff !important; }
+.ace_editor .ace_identifier, .ace_editor .ace_paren, .ace_editor .ace_text-layer { color: #d6dbe1 !important; }

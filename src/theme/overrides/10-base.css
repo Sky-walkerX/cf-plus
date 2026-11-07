@@ -1,0 +1,56 @@
+body,
+#body,
+#pageContent,
+#sidebar {
+  background: var(--cfx-bg) !important;
+  color: var(--cfx-text);
+}
+body { color: var(--cfx-text) !important; }
+
+a, a:link { color: var(--cfx-link); }
+a:visited { color: var(--cfx-link-visited); }
+a.not-decorated, .logo-href, a.non-decorated { color: var(--cfx-text) !important; }
+
+::selection { background: rgb(122 162 247 / 0.35); color: inherit; }
+
+input, select, textarea, button {
+  background-color: var(--cfx-field) !important;
+  color: var(--cfx-text) !important;
+  border: 1px solid var(--cfx-border-strong) !important;
+  border-radius: 6px;
+}
+input[type='checkbox'], input[type='radio'] { accent-color: var(--cfx-accent); background: none !important; border: 0 !important; }
+input[type='image'] { background: none !important; border: 0 !important; }
+input::placeholder, textarea::placeholder { color: var(--cfx-text-faint); }
+input[type='submit'], input[type='button'], button { cursor: pointer; }
+input[type='submit']:hover, input[type='button']:hover, button:hover { background-color: var(--cfx-surface-3) !important; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+  outline: 2px solid var(--cfx-focus);
+  outline-offset: 1px;
+}
+
+hr { border-color: var(--cfx-border) !important; background: var(--cfx-border); }
+table, th, td { border-color: var(--cfx-border) !important; }
+th { color: var(--cfx-text); }
+
+.notice, .muted, .countdown, .contest-state-regular, .unrated-allowed { color: var(--cfx-text-muted) !important; }
+.warning { color: var(--cfx-warn) !important; }
+.caption, .contest-state-phase, .comments .title { color: var(--cfx-caption) !important; }
+
+.search, .search-large, .filter-box input, .datatable .filter input, .search-help code {
+  background-color: var(--cfx-surface-2) !important;
+  border-color: var(--cfx-border-strong) !important;
+  color: var(--cfx-text) !important;
+}
+
+.highlight { background-color: rgb(240 176 74 / 0.12) !important; border-color: rgb(240 176 74 / 0.45) !important; }
+.highlight-blue { background-color: var(--cfx-row-info) !important; border-color: rgb(122 162 247 / 0.4) !important; }
+
+/* Icons drawn as dark-on-transparent PNG/GIF sprites. */
+img[src*='/images/icons/'], img[src*='tablesorter-bg'], img[src*='/datatable/'], .spoiler::before {
+  filter: invert(0.85) hue-rotate(180deg);
+}
+/* …but coloured status icons keep their colour. */
+img[src*='ok-16x16'], img[src*='submit-22x22'], img[src*='lightning-16x16'], img[src*='star_'], img[src*='/flags/'] {
+  filter: none;
+}

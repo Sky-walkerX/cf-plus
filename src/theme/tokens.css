@@ -1,0 +1,112 @@
+/*
+ * CF+ design tokens: DEFAULT (white) theme, matched to stock Codeforces. Injected on every CF page.
+ * The Slate and Pure dark palettes (theme/palettes/*.css) override these at higher specificity.
+ * CF+ Shadow-DOM UIs read these through inheritance (custom properties cross shadow roots).
+ */
+:root {
+  --cfx-bg: #ffffff;
+  --cfx-surface: #ffffff;
+  --cfx-surface-2: #f8f8f8;
+  --cfx-surface-3: #e1e1e1;
+  --cfx-head: #f0f0f0;
+  --cfx-border: #b9b9b9;
+  --cfx-border-strong: #a9a9a9;
+  --cfx-field: #ffffff;
+  --cfx-text: #222222;
+  --cfx-text-muted: #666666;
+  --cfx-text-faint: #888888;
+  --cfx-link: #0000ee;
+  --cfx-link-visited: #551a8b;
+  --cfx-caption: #3b5998;
+  --cfx-accent: #3b5998;
+  --cfx-accent-soft: #e8edf7;
+  --cfx-ok: #008800;
+  --cfx-bad: #cc0000;
+  --cfx-warn: #b36b00;
+  --cfx-focus: #3b5998;
+  --cfx-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+
+  --cfx-cell-empty: #ebedf0;
+  --cfx-count-1: #9be9a8;
+  --cfx-count-2: #40c463;
+  --cfx-count-3: #30a14e;
+  --cfx-count-4: #216e39;
+
+  --cfx-rank-unrated: #c3c7cc;
+  --cfx-rank-newbie: #9aa1a9;
+  --cfx-rank-pupil: #38a34a;
+  --cfx-rank-specialist: #14a89c;
+  --cfx-rank-expert: #4a6cf7;
+  --cfx-rank-cm: #b14fd8;
+  --cfx-rank-master: #f2a33a;
+  --cfx-rank-im: #d97400;
+  --cfx-rank-gm: #f0504a;
+  --cfx-rank-igm: #f0504a;
+  --cfx-rank-lgm: #f0504a;
+
+  /* categorical (pie slices): validated palette, fixed order */
+  --cfx-series-1: #2a78d6;
+  --cfx-series-2: #eb6834;
+  --cfx-series-3: #1baf7a;
+  --cfx-series-4: #eda100;
+  --cfx-series-5: #e87ba4;
+  --cfx-series-6: #008300;
+  --cfx-series-7: #6250d6;
+  --cfx-series-8: #e34948;
+  --cfx-series-other: #c4c4c4;
+  --cfx-bar: #3b5998;
+  --cfx-track: #eeeeee;
+
+  --cfx-font: verdana, arial, sans-serif;
+  --cfx-font-narrow: 'PT Sans Narrow', 'Arial Narrow', sans-serif;
+}
+
+/* Spoiler-free mode (all themes). */
+:root[data-cfx-spoiler='on'] {
+  & table.problems tr:not([data-cfx-revealed]) a.notice[href*='tags='],
+  & table.problems tr:not([data-cfx-revealed]) span.ProblemRating,
+  & #sidebar .cfx-spoiler-tags:not([data-cfx-revealed]) .tag-box {
+    filter: blur(5px);
+    opacity: 0.55;
+    user-select: none;
+    pointer-events: none;
+  }
+}
+:root[data-cfx-solved='dim'] table.problems tr.cfx-solved td { opacity: 0.45; }
+:root[data-cfx-solved='dim'] table.problems tr.cfx-solved:hover td { opacity: 1; }
+:root[data-cfx-solved='hide'] table.problems tr.cfx-solved { display: none; }
+
+/* The CF+ heatmap replaces only the native grid; CF's counters and year selector stay. */
+:root[data-cfx-heatmap='on'] #userActivityGraph { display: none !important; }
+
+/* Reveal chips (spoiler-free mode). */
+.cfx-reveal {
+  display: none;
+  cursor: pointer;
+  font: 11px/1 var(--cfx-font);
+  padding: 2px 6px;
+  margin-left: 6px;
+  border-radius: 3px;
+  border: 1px solid var(--cfx-border-strong);
+  background: var(--cfx-field);
+  color: var(--cfx-text-muted);
+  vertical-align: middle;
+}
+.cfx-reveal:hover { color: var(--cfx-text); }
+:root[data-cfx-spoiler='on'] {
+  & table.problems tr:not([data-cfx-revealed]) .cfx-reveal,
+  & #sidebar .cfx-spoiler-tags:not([data-cfx-revealed]) .cfx-reveal { display: inline-block; }
+}
+
+/* CF+ additions to Codeforces tables (all themes). */
+:root { --cfx-row-info: #e9effa; }
+.cfx-estimated { color: var(--cfx-text-muted); font-style: italic; }
+.cfx-friends { font-size: 1rem; color: var(--cfx-text-muted); margin-top: 2px; }
+table.standings tr.cfx-friend-row td { background-color: var(--cfx-row-info) !important; }
+table.standings tr.cfx-friend-row td:first-child { box-shadow: inset 3px 0 0 var(--cfx-caption); }
+table.standings .cfx-col { font-size: 1.1rem; }
+:root[data-cfx-spoiler='on'] table.problems tr:not([data-cfx-revealed]) .cfx-rating {
+  filter: blur(5px);
+  opacity: 0.55;
+  user-select: none;
+}

@@ -1,0 +1,44 @@
+div.ttypography, div.ttypography table { color: var(--cfx-text) !important; }
+div.ttypography h1, div.ttypography h2, div.ttypography h3, div.ttypography h4, div.ttypography h5, div.ttypography h6 { color: var(--cfx-text) !important; }
+div.ttypography blockquote { color: var(--cfx-text-muted) !important; border-left: 3px solid var(--cfx-border-strong); }
+div.ttypography a { color: var(--cfx-link) !important; }
+div.ttypography a:hover, div.ttypography a:focus { background-color: var(--cfx-accent-soft) !important; color: var(--cfx-link) !important; }
+div.ttypography mark { background: rgb(240 176 74 / 0.35) !important; color: var(--cfx-text) !important; }
+div.ttypography hr { border-bottom-color: var(--cfx-border) !important; }
+div.ttypography thead th { color: var(--cfx-text) !important; border-bottom-color: var(--cfx-border-strong) !important; }
+div.ttypography .bordertable thead th, div.ttypography .bordertable tbody th[scope='row'] { background: var(--cfx-surface-2) !important; }
+div.ttypography tbody tr:hover th, div.ttypography tbody tr:hover td { background: var(--cfx-surface-2) !important; }
+div.ttypography .bordered { border-color: var(--cfx-border) !important; box-shadow: none !important; }
+
+.topic .title *, .topic .title a, .topic .title a:visited, .topic-edit .title { color: var(--cfx-link) !important; }
+.topic .content { border-left-color: var(--cfx-border-strong) !important; }
+.topic-userpic { border-color: var(--cfx-border) !important; }
+.collapsible-topic.collapsed .content .collapsible-topic-options::before {
+  background-image: linear-gradient(transparent, var(--cfx-bg)) !important;
+}
+.blog-entry-section-name { color: var(--cfx-text) !important; }
+
+.comment-table { border-color: transparent !important; }
+.comment-table .info, .comment-table .info .item a, .comment-table .reply a { color: var(--cfx-text-faint) !important; }
+.comment-indent span { color: var(--cfx-border-strong) !important; }
+.comment-table.highlight-blue { background-color: var(--cfx-row-info) !important; }
+
+.spoiler-content { background-color: var(--cfx-surface-2) !important; border-color: var(--cfx-border-strong) !important; }
+.spoiler-title { color: var(--cfx-link) !important; }
+
+.likeActionLink, .dislikeActionLink { color: var(--cfx-text-faint) !important; }
+.liked { color: var(--cfx-link) !important; }
+.disliked, .live li .comments { color: var(--cfx-bad) !important; }
+.live li .blog { color: var(--cfx-text) !important; }
+
+div.alert-info { color: #9cc4ff; background-color: rgb(122 162 247 / 0.12); border-color: rgb(122 162 247 / 0.3); }
+div.alert-warning, .alert { color: #f3c77a !important; background-color: rgb(240 176 74 / 0.1) !important; border-color: rgb(240 176 74 / 0.3) !important; }
+div.alert-error { color: #ff9b9b; background-color: rgb(255 107 107 / 0.1); border-color: rgb(255 107 107 / 0.3); }
+div.alert-success { color: #86e0a0; background-color: rgb(76 199 106 / 0.1); border-color: rgb(76 199 106 / 0.3); }
+
+.text-label-blue, .text-label-info { color: #9cc4ff !important; }
+.text-label-yellow, .text-label-warning { background-color: rgb(240 176 74 / 0.12) !important; }
+.text-label-red, .text-label-error { background-color: rgb(255 107 107 / 0.12) !important; color: #ff9b9b !important; }
+.text-label-gray, .text-label-muted { background-color: var(--cfx-surface-3) !important; }
+.copier-small { color: var(--cfx-text-muted) !important; border-color: var(--cfx-border-strong) !important; }
+.copier-small:hover { background-color: var(--cfx-surface-3) !important; }

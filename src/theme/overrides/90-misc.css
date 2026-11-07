@@ -1,0 +1,59 @@
+/* Popups and widgets */
+#facebox .popup, #facebox .content, #facebox .body, #cboxContent, #cboxLoadedContent, .datepick, .datepick-popup .datepick,
+.ac_results, .jGrowl-notification, .jGrowl .jGrowl-notification, #colorbox, .ui-dialog {
+  background: var(--cfx-surface) !important;
+  color: var(--cfx-text) !important;
+  border-color: var(--cfx-border-strong) !important;
+}
+.ac_results li { background: var(--cfx-surface) !important; color: var(--cfx-text) !important; }
+.ac_results .ac_over { background: var(--cfx-surface-3) !important; }
+#facebox .popup, #facebox table, #facebox td { border-color: var(--cfx-border-strong) !important; }
+#facebox_overlay, #cboxOverlay { background: #000 !important; }
+.datepick-month td a, .datepick-month th { color: var(--cfx-text) !important; background: transparent !important; }
+.datepick-month td .datepick-selected { background: var(--cfx-accent-soft) !important; }
+
+/* Legacy inline colours: the common cases. */
+[style*='background-color: white'], [style*='background-color:white'],
+[style*='background-color: #fff;'], [style*='background-color:#fff;'],
+[style*='background-color: #FFFFFF'], [style*='background-color:#FFFFFF'], [style*='background-color: #ffffff'],
+[style*='background: white'], [style*='background:white'], [style*='background: #fff'], [style*='background:#fff'],
+[bgcolor='white'], [bgcolor='#ffffff'], [bgcolor='#FFFFFF'] {
+  background-color: var(--cfx-surface) !important;
+}
+[style*='background-color: #E1E1E1'], [style*='background-color:#E1E1E1'], [style*='background-color: #e1e1e1'],
+[style*='background-color:#f0f0f0'], [style*='background-color: #f0f0f0'], [style*='background-color:#F0F0F0'],
+[style*='background-color: #f8f8f8'], [style*='background-color: #F8F8F8'], [style*='background-color: #eee'],
+[style*='background-color:#eee'], [style*='background-color: #EEE'], [style*='background-color: #f5f5f5'] {
+  background-color: var(--cfx-surface-2) !important;
+}
+[style*='border:1px solid #B9B9B9'], [style*='border: 1px solid #B9B9B9'], [style*='border:1px solid #b9b9b9'] {
+  border-color: var(--cfx-border) !important;
+}
+[style*='color: black'], [style*='color:black'], [style*='color: #000'], [style*='color:#000'] { color: var(--cfx-text) !important; }
+font[color='black'], font[color='#000000'] { color: var(--cfx-text) !important; }
+.tag-box { color: var(--cfx-text) !important; }
+
+/* Native flot rating graph: CF+ recolours its bands in the page itself (rating-graph content script). */
+#usersRatingGraphPlaceholder .flot-text, #usersRatingGraphPlaceholder .tickLabel { color: var(--cfx-text-muted) !important; }
+.legend > div { background-color: var(--cfx-surface-2) !important; opacity: 0.9 !important; }
+.legend table, .legend td { color: var(--cfx-text) !important; border: 0 !important; }
+#tooltip { background: var(--cfx-surface-3) !important; color: var(--cfx-text) !important; border-color: var(--cfx-border-strong) !important; }
+
+/* Native activity heatmap (when CF+ heatmap is off). */
+#userActivityGraph rect.day[fill='#EBEDF0'] { fill: var(--cfx-cell-empty); }
+#userActivityGraph svg text { fill: var(--cfx-text-faint) !important; }
+._UserActivityFrame_counterValue { color: var(--cfx-text) !important; }
+._UserActivityFrame_counterDescription, ._UserActivityFrame_header, ._UserActivityFrame_caption { color: var(--cfx-text-faint) !important; }
+._UserActivityFrame_header select, #typeSelectForm select { background-color: var(--cfx-field) !important; }
+
+/* Status / submission page */
+.source-and-history-div, #program-source-text, .roundbox .source { background: var(--cfx-surface-2) !important; }
+#pageContent .second-level-menu { border-color: var(--cfx-border) !important; }
+.verdictPrototypeDiv { color: var(--cfx-text) !important; }
+
+/* Talks / messages */
+.talk-text, .talk-message, .talk-table td { background: var(--cfx-surface) !important; color: var(--cfx-text) !important; }
+
+/* Generic iframe-free widgets with hardcoded backgrounds. */
+.diagnostics-icon { color: var(--cfx-warn) !important; }
+.red-link { background-color: #a32a2a !important; }

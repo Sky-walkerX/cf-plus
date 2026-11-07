@@ -1,0 +1,66 @@
+/* Slate: dark gray with a slight blue tint (echoes CF's blue). Values from the approved design. */
+color-scheme: dark;
+
+--cfx-bg: #10151c;
+--cfx-surface: #18202a;
+--cfx-surface-2: #1d2632;
+--cfx-surface-3: #263142;
+--cfx-head: #1f2935;
+--cfx-border: #2c3747;
+--cfx-border-strong: #3a475a;
+--cfx-field: #1f2833;
+--cfx-text: #dde3ec;
+--cfx-text-muted: #98a4b6;
+--cfx-text-faint: #7f8b9d;
+--cfx-link: #8eabff;
+--cfx-link-visited: #b3a2f5;
+--cfx-caption: #9cb6ef;
+--cfx-accent: #8eabff;
+--cfx-accent-soft: rgb(142 171 255 / 0.14);
+--cfx-ok: #4cc76a;
+--cfx-bad: #ff6b6b;
+--cfx-warn: #f0b04a;
+--cfx-focus: #8eabff;
+--cfx-row-ok: rgb(76 199 106 / 0.14);
+--cfx-row-bad: rgb(255 107 107 / 0.13);
+--cfx-row-info: rgb(142 171 255 / 0.14);
+--cfx-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
+
+/* handles (text) */
+--cfx-h-gray: #a0a7b1;
+--cfx-h-green: #4cc76a;
+--cfx-h-cyan: #2ec4b6;
+--cfx-h-blue: #8ea2ff;
+--cfx-h-violet: #d38cf5;
+--cfx-h-orange: #ffa53d;
+--cfx-h-red: #ff6b6b;
+--cfx-h-legendary: #dde3ec;
+
+/* heatmap + charts */
+--cfx-cell-empty: #222c39;
+--cfx-count-1: #0e4429;
+--cfx-count-2: #006d32;
+--cfx-count-3: #26a641;
+--cfx-count-4: #39d353;
+--cfx-rank-unrated: #4f5b6c;
+--cfx-rank-newbie: #8b939e;
+--cfx-rank-pupil: #4cc76a;
+--cfx-rank-specialist: #2ec4b6;
+--cfx-rank-expert: #6e8cff;
+--cfx-rank-cm: #cf7df0;
+--cfx-rank-master: #ffc266;
+--cfx-rank-im: #ff8a1f;
+--cfx-rank-gm: #ff8080;
+--cfx-rank-igm: #ff8080;
+--cfx-rank-lgm: #ff8080;
+--cfx-series-1: #3987e5;
+--cfx-series-2: #d95926;
+--cfx-series-3: #199e70;
+--cfx-series-4: #c98500;
+--cfx-series-5: #d55181;
+--cfx-series-6: #008300;
+--cfx-series-7: #9085e9;
+--cfx-series-8: #e66767;
+--cfx-series-other: #3a475a;
+--cfx-bar: #6f8fe0;
+--cfx-track: #222c39;

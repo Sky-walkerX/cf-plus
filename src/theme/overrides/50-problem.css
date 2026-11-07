@@ -1,0 +1,61 @@
+.problem-statement { color: var(--cfx-text); }
+.problem-statement .header .title { color: var(--cfx-text); }
+.problem-statement .property-title { color: var(--cfx-text-muted); }
+.problem-statement .section-title { color: var(--cfx-text); }
+.problem-statement .epigraph-source, .statement-footnote::before { border-color: var(--cfx-border-strong) !important; }
+
+.problem-statement .sample-tests .input,
+.problem-statement .sample-tests .output,
+.problem-statement .sample-tests .title { border-color: var(--cfx-border-strong) !important; }
+.problem-statement .sample-tests .title { background: var(--cfx-surface-2); color: var(--cfx-text); }
+.problem-statement .sample-tests pre { background-color: var(--cfx-surface-2) !important; color: var(--cfx-text) !important; }
+.problem-statement .test-example-line-even { background-color: var(--cfx-surface-3) !important; }
+.problem-statement .test-example-line-odd { background-color: transparent !important; }
+.input-output-copier { color: var(--cfx-text-muted) !important; border-color: var(--cfx-border-strong) !important; }
+.input-output-copier:hover { background-color: var(--cfx-surface-3) !important; }
+
+.problem-statement .interaction-log pre, .interactionLog { color: var(--cfx-text) !important; }
+.problem-statement .interaction-log .IN, .interactionLog .IN { background-color: var(--cfx-row-info) !important; }
+.problem-statement .interaction-log .OUT, .interactionLog .OUT { background-color: var(--cfx-surface-3) !important; }
+.problem-statement .interaction-log .direction, .interactionLog .direction { color: var(--cfx-text-faint) !important; }
+
+.problem-statement .tex-tabular td { border-color: var(--cfx-border-strong) !important; }
+.problem-statement .tex-tabular .tex-tabular-border-left { border-left-color: var(--cfx-border-strong) !important; }
+.problem-statement .tex-tabular .tex-tabular-border-right { border-right-color: var(--cfx-border-strong) !important; }
+.problem-statement .tex-tabular .tex-tabular-border-top { border-top-color: var(--cfx-border-strong) !important; }
+.problem-statement .tex-tabular .tex-tabular-border-bottom { border-bottom-color: var(--cfx-border-strong) !important; }
+
+.test-for-popup pre { background-color: var(--cfx-surface-2) !important; border-color: var(--cfx-border-strong) !important; }
+
+/* Statement images are mostly black line art on transparency. */
+.problem-statement img.tex-graphics,
+.problem-statement p img,
+.problem-statement center img,
+.ttypography img.tex-graphics {
+  background: #f4f3ef;
+  padding: 6px;
+  border-radius: 6px;
+}
+&[data-cfx-img='invert'] {
+  .problem-statement img.tex-graphics,
+  .problem-statement p img,
+  .problem-statement center img,
+  .ttypography img.tex-graphics {
+    background: transparent;
+    padding: 0;
+    filter: invert(0.88) hue-rotate(180deg);
+  }
+}
+&[data-cfx-img='none'] {
+  .problem-statement img.tex-graphics,
+  .problem-statement p img,
+  .problem-statement center img,
+  .ttypography img.tex-graphics {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+/* MathJax: CF forces black. */
+.MathJax, .MathJax *, .ttypography .MathJax, .mjx-chtml, mjx-container { color: inherit !important; }
+.MathJax_Display, .MathJax span { border-color: currentColor; }
