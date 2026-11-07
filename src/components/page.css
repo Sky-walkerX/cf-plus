@@ -1,0 +1,33 @@
+/* Shared base for extension pages (popup, options). Tokens come from theme/tokens.css; dark from theme/dark*.css. */
+html, body { margin: 0; background: var(--cfx-bg); }
+body {
+  font-family: var(--cfx-font);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--cfx-text);
+  -webkit-font-smoothing: antialiased;
+}
+.row { display: flex; align-items: center; gap: 10px; }
+.row .grow { flex: 1; min-width: 0; }
+.setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--cfx-border); }
+.setting:last-child { border-bottom: 0; }
+.setting .name { font-weight: 500; }
+.setting .desc { font-size: 11.5px; color: var(--cfx-text-muted); margin-top: 1px; }
+.switch { position: relative; width: 32px; height: 18px; flex: none; }
+.switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--cfx-border-strong); transition: background 0.15s; cursor: pointer; }
+.switch span::after { content: ''; position: absolute; width: 14px; height: 14px; left: 2px; top: 2px; border-radius: 50%; background: #fff; transition: transform 0.15s; box-shadow: 0 1px 2px rgb(0 0 0 / 0.3); }
+.switch input:checked + span { background: var(--cfx-accent); }
+.switch input:checked + span::after { transform: translateX(14px); }
+.switch input:focus-visible + span { outline: 2px solid var(--cfx-focus); outline-offset: 2px; }
+input.text {
+  font: inherit;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--cfx-border-strong);
+  background: var(--cfx-surface-2);
+  color: var(--cfx-text);
+  outline: none;
+}
+input.text:focus { border-color: var(--cfx-focus); }
+@media (prefers-reduced-motion: reduce) { .switch span, .switch span::after { transition: none; } }

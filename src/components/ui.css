@@ -1,0 +1,190 @@
+/*
+ * CF+ UI in Codeforces' own visual language: Verdana, 6px roundboxes with "→" captions,
+ * square bars, datatable-style tables, PT Sans Narrow uppercase tabs.
+ * Colours come only from --cfx-* tokens (inherited from :root, so all three themes work).
+ */
+:host {
+  all: initial;
+  display: block;
+  font-family: var(--cfx-font);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--cfx-text);
+}
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+a { color: var(--cfx-link); }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--cfx-text-muted); }
+.faint { color: var(--cfx-text-faint); }
+:focus-visible { outline: 2px solid var(--cfx-focus); outline-offset: 1px; }
+
+/* ---------- CF roundbox ---------- */
+.box {
+  border: 1px solid var(--cfx-border);
+  border-radius: 6px;
+  background: var(--cfx-surface);
+}
+.box-caption {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--cfx-border);
+  color: var(--cfx-caption);
+  font-weight: 700;
+  font-size: 15px;
+}
+.box-body { padding: 14px 12px; }
+
+/* ---------- tabs (CF second-level menu look) ---------- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 8px 6px;
+  border-bottom: 1px solid var(--cfx-border);
+}
+.tabs button {
+  all: unset;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: var(--cfx-font-narrow);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--cfx-text);
+}
+.tabs button:hover { background: var(--cfx-surface-2); }
+.tabs button[aria-selected='true'] { background: var(--cfx-surface-3); }
+.tabs button:focus { outline: none; }
+.tabs button:focus-visible { outline: 1px dotted var(--cfx-text-muted); outline-offset: 1px; }
+.note { font-size: 11px; color: var(--cfx-text-faint); margin-bottom: 8px; }
+
+/* ---------- small controls ---------- */
+.pair { display: inline-flex; vertical-align: middle; }
+.pair button {
+  all: unset;
+  cursor: pointer;
+  font-family: var(--cfx-font);
+  font-size: 12px;
+  line-height: 16px;
+  padding: 1px 9px;
+  border: 1px solid var(--cfx-border-strong);
+  background: var(--cfx-field);
+  color: var(--cfx-text-muted);
+}
+.pair button:first-child { border-radius: 3px 0 0 3px; border-right: 0; }
+.pair button:last-child { border-radius: 0 3px 3px 0; }
+.pair button[aria-pressed='true'] { background: var(--cfx-surface-3); color: var(--cfx-text); font-weight: 700; }
+.pair button:focus-visible { outline: 2px solid var(--cfx-focus); }
+.linkbtn {
+  all: unset;
+  cursor: pointer;
+  color: var(--cfx-link);
+  text-decoration: underline;
+  font-size: 12px;
+}
+.btn {
+  all: unset;
+  cursor: pointer;
+  font-family: var(--cfx-font);
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid var(--cfx-border-strong);
+  border-radius: 3px;
+  background: var(--cfx-field);
+  color: var(--cfx-text);
+  text-decoration: none;
+}
+.btn:hover { background: var(--cfx-surface-2); }
+.btn:focus-visible { outline: 2px solid var(--cfx-focus); }
+
+/* segmented control (popup / options) */
+.seg { display: inline-flex; }
+.seg button {
+  all: unset;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 9px;
+  border: 1px solid var(--cfx-border-strong);
+  border-left-width: 0;
+  background: var(--cfx-field);
+  color: var(--cfx-text-muted);
+  white-space: nowrap;
+}
+.seg button:first-child { border-left-width: 1px; border-radius: 3px 0 0 3px; }
+.seg button:last-child { border-radius: 0 3px 3px 0; }
+.seg button[aria-pressed='true'] { background: var(--cfx-surface-3); color: var(--cfx-text); font-weight: 700; }
+.seg button:focus-visible { outline: 2px solid var(--cfx-focus); }
+
+/* ---------- heatmap ---------- */
+.hm { position: relative; }
+.hm svg { width: 100%; height: auto; display: block; overflow: visible; }
+.hm text { fill: var(--cfx-text-faint); font-size: 9px; font-family: var(--cfx-font); }
+.hm rect { cursor: pointer; }
+.hm rect.on { stroke: var(--cfx-text); stroke-width: 1; }
+.hm svg:focus-visible { outline: none; }
+.hm svg:focus-visible rect.on { stroke: var(--cfx-focus); stroke-width: 1.5; }
+
+/* ---------- tooltip ---------- */
+.tip {
+  position: absolute;
+  z-index: 10;
+  padding: 6px 9px;
+  background: var(--cfx-surface-2);
+  border: 1px solid var(--cfx-border);
+  border-radius: 3px;
+  box-shadow: var(--cfx-shadow);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tip.pinned { pointer-events: auto; }
+.tip .t-head { font-weight: 700; margin-bottom: 3px; }
+.tip .t-row { display: flex; gap: 8px; padding: 1px 0; max-width: 340px; }
+.tip .t-row b { min-width: 34px; }
+.tip .t-row a { overflow: hidden; text-overflow: ellipsis; }
+.tip .t-hint { color: var(--cfx-text-faint); font-size: 11px; margin-top: 4px; }
+
+/* ---------- bars (ratings tab) ---------- */
+.bars { display: flex; align-items: flex-end; gap: 4px; height: 280px; border-bottom: 1px solid var(--cfx-border); }
+.bars .col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; gap: 2px; }
+.bars .tried { border: 1px solid; border-bottom: 0; }
+.bars .col.dim { opacity: 0.45; }
+.xlabels { display: flex; gap: 4px; padding-top: 4px; }
+.xlabels span { flex: 1; text-align: center; font-size: 10px; color: var(--cfx-text-faint); }
+
+/* ---------- CF datatable ---------- */
+.dt { display: grid; border: 1px solid var(--cfx-border); font-size: 12.5px; }
+.dt > span { padding: 5px 8px; border-top: 1px solid var(--cfx-border); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dt > span.h { background: var(--cfx-head); font-weight: 700; border-top: 0; }
+.dt > span.c { text-align: center; padding-left: 4px; padding-right: 4px; text-overflow: clip; }
+.dt > span.alt { background: var(--cfx-surface-2); }
+.dt > span b { font-weight: 700; }
+.dt a { color: var(--cfx-link); }
+.sw { display: inline-block; width: 10px; height: 10px; flex: none; vertical-align: -1px; margin-right: 7px; }
+
+/* ---------- horizontal bars (verdicts) ---------- */
+.hrows { display: flex; flex-direction: column; gap: 8px; }
+.hrow { display: grid; grid-template-columns: 170px minmax(0, 1fr) 50px 44px; align-items: center; gap: 10px; font-size: 12.5px; }
+.hrow .track { height: 9px; background: var(--cfx-track); }
+.hrow .fill { height: 9px; }
+
+/* ---------- counters (CF profile style) ---------- */
+.counters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.counters .v { font-size: 21px; }
+.counters .l { font-size: 11.5px; color: var(--cfx-text-faint); }
+
+/* ---------- generic (popup/options/problem toolbar) ---------- */
+.stats { display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: 8px; }
+.stat .v { font-size: 20px; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 11px; color: var(--cfx-text-faint); }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
+.chip .dot { width: 8px; height: 8px; }
+.empty { padding: 16px; text-align: center; color: var(--cfx-text-faint); }
+.err { padding: 8px 10px; border: 1px solid var(--cfx-bad); color: var(--cfx-text); font-size: 12px; }
+.skel { background: var(--cfx-surface-2); }
+.group-title { font-size: 12px; font-weight: 700; margin: 14px 0 6px; color: var(--cfx-text-muted); }
+.row { display: flex; align-items: center; gap: 8px; }
+.grow { flex: 1; min-width: 0; }
+.updated { font-size: 11px; color: var(--cfx-text-faint); }
+.dt > span.hl { background: var(--cfx-surface-3); }
