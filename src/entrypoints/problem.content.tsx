@@ -1,15 +1,16 @@
 /**
- * Problem pages: toolbar under the statement header with the rating badge, editorial/status/submit
- * links and a per-problem practice stopwatch. Also spoiler-free handling of the sidebar tag box.
+ * Problem pages: a practice stopwatch at the top of the statement, spoiler-free handling of the
+ * sidebar tag box, an estimated-difficulty tag while Codeforces hasn't rated the problem yet, and
+ * the friends box.
  */
 import { useEffect, useState } from 'preact/hooks';
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { mountShadow } from '../components/mount';
 import { parseProblemUrl, SEL } from '../lib/dom';
 import { problemKey, type Model } from '../lib/model';
-import { send, type FriendsOnProblemResponse } from '../lib/messaging';
-import { bandLabel, bandOf, bandVar, rankClass } from '../lib/ranks';
-import { getSettings, onSettingsChanged } from '../lib/settings';
+import { send } from '../lib/messaging';
+import { mountFriendsBox } from '../lib/friends-box';
+import { getSettings } from '../lib/settings';
 import { loadOwnModel } from '../lib/solved';
 import { createStore } from '../lib/store';
 
@@ -19,7 +20,7 @@ interface TimerState {
   doneMs?: number;
 }
 
-const state = createStore<{ model: Model | null; spoiler: boolean; estimate: number | null }>({ model: null, spoiler: false, estimate: null });
+const state = createStore<{ model: Model | null }>({ model: null });
 
 const fmt = (ms: number) => {
   const s = Math.floor(ms / 1000);
@@ -74,148 +75,34 @@ const Icon = ({ d }: { d: string }) => (
   </svg>
 );
 
-function Toolbar(props: { cid: number; index: string; rating: number | null; editorial: string | null; inContest: boolean }) {
-  const { model, spoiler, estimate } = state.use();
-  const key = problemKey({ contestId: props.cid, index: props.index });
-  const solve = model?.solves.find((s) => s.key === key);
-  const solved = !!model?.solvedKeys.has(key);
-  const [revealed, setRevealed] = useState(false);
-  const timer = useTimer(key, solved ? (solve?.firstAcAt ?? Date.now() / 1000) * 1000 : null);
-
-  const base = props.cid >= 100000 ? `/gym/${props.cid}` : props.inContest ? `/contest/${props.cid}` : null;
-  const status = base ? `${base}/status/${props.index}` : `/problemset/status/${props.cid}/problem/${props.index}`;
-  const submit = base ? `${base}/submit/${props.index}` : `/problemset/submit/${props.cid}/${props.index}`;
-  const hideRating = spoiler && !solved && !revealed;
-  const rating = props.rating ?? estimate;
-  const estimated = props.rating == null && estimate != null;
-  const band = bandOf(rating);
-
+/** Time from pressing start to the first accepted submission; stops by itself on AC. */
+function Stopwatch(props: { problemKey: string }) {
+  const { model } = state.use();
+  const solve = model?.solves.find((s) => s.key === props.problemKey);
+  const solved = !!model?.solvedKeys.has(props.problemKey);
+  const timer = useTimer(props.problemKey, solved ? (solve?.firstAcAt ?? Date.now() / 1000) * 1000 : null);
+  if (!timer.ready) return null;
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', margin: '10px 0 4px', fontSize: '12px' }}>
-      {rating != null &&
-        (hideRating ? (
-          <button class="btn" onClick={() => setRevealed(true)} title="Spoiler-free mode is on">
-            Rating hidden · show
-          </button>
-        ) : (
-          <span
-            class="chip"
-            style={{ padding: '2px 8px', borderRadius: '3px', border: '1px solid var(--cfx-border-strong)', color: 'var(--cfx-text)', fontStyle: estimated ? 'italic' : undefined }}
-            title={estimated ? 'Estimated by CF+ from contest results. Codeforces has not rated this problem yet.' : bandLabel(band)}
-          >
-            <span class="sw" style={{ background: bandVar(band), marginRight: '2px' }} />
-            {estimated ? `≈${rating}` : rating}
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
+      {timer.doneMs != null ? (
+        <span class="muted num" title="Time from starting the stopwatch to your first accepted submission">
+          ⏱ Solved in {fmt(timer.doneMs)}
+        </span>
+      ) : (
+        <button class="btn num" onClick={timer.toggle} title={timer.running ? 'Pause stopwatch' : 'Start practice stopwatch'} aria-label={timer.running ? 'Pause stopwatch' : 'Start stopwatch'}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <Icon d={timer.running ? 'M8 5v14M16 5v14' : 'M7 4l12 8-12 8z'} />
+            {timer.value ? fmt(timer.value) : 'Start timer'}
           </span>
-        ))}
-      {solved && (
-        <span class="chip" style={{ padding: '3px 9px', borderRadius: '999px', background: 'color-mix(in oklch, var(--cfx-ok) 16%, transparent)', color: 'var(--cfx-text)' }}>
-          <Icon d="M5 12l5 5L20 7" /> Solved
-        </span>
+        </button>
       )}
-      {props.editorial && (
-        <a class="btn" href={props.editorial} target="_blank" rel="noopener">
-          Editorial
-        </a>
+      {(timer.value > 0 || timer.doneMs != null) && (
+        <button class="btn" onClick={timer.reset} title="Reset stopwatch" aria-label="Reset stopwatch">
+          <Icon d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" />
+        </button>
       )}
-      <a class="btn" href={status}>
-        Status
-      </a>
-      <a class="btn" href={submit}>
-        Submit
-      </a>
-      {timer.ready && (
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginLeft: '6px' }}>
-          {timer.doneMs != null ? (
-            <span class="muted num" title="Time from starting the stopwatch to your first accepted submission">
-              ⏱ Solved in {fmt(timer.doneMs)}
-            </span>
-          ) : (
-            <>
-              <button class="btn num" onClick={timer.toggle} title={timer.running ? 'Pause stopwatch' : 'Start practice stopwatch'} aria-label={timer.running ? 'Pause stopwatch' : 'Start stopwatch'}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <Icon d={timer.running ? 'M8 5v14M16 5v14' : 'M7 4l12 8-12 8z'} />
-                  {timer.value ? fmt(timer.value) : 'Start timer'}
-                </span>
-              </button>
-            </>
-          )}
-          {(timer.value > 0 || timer.doneMs != null) && (
-            <button class="btn" onClick={timer.reset} title="Reset stopwatch" aria-label="Reset stopwatch">
-              <Icon d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" />
-            </button>
-          )}
-        </span>
-      )}
-    </div>
+    </span>
   );
-}
-
-const fmtDate = (s: number) => new Date(s * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-/** "→ Friends" sidebox, built from Codeforces' own sidebar markup so it is themed like the rest. */
-async function mountFriendsBox(contestId: number, index: string) {
-  const sidebar = document.querySelector(SEL.sidebar);
-  if (!sidebar || document.getElementById('cfx-friends-box')) return;
-  const box = document.createElement('div');
-  box.id = 'cfx-friends-box';
-  box.className = 'roundbox sidebox borderTopRound';
-  const caption = document.createElement('div');
-  caption.className = 'caption titled';
-  caption.textContent = '→ Friends';
-  const body = document.createElement('div');
-  Object.assign(body.style, { padding: '0.5em 0.75em 0.75em', fontSize: '1.2rem', lineHeight: '1.6' });
-  body.textContent = 'Loading…';
-  box.append(caption, body);
-  const anchor = sidebar.querySelector('.roundbox.sidebox');
-  if (anchor) anchor.after(box);
-  else sidebar.prepend(box);
-
-  let res: FriendsOnProblemResponse;
-  try {
-    res = await send({ type: 'friendsOnProblem', contestId, index });
-  } catch {
-    box.remove();
-    return;
-  }
-  const { solved, tried, progress } = res;
-  const userLink = (h: string, rating?: number, href = `/profile/${h}`) => {
-    const a = document.createElement('a');
-    a.href = href;
-    a.textContent = h;
-    a.className = `rated-user ${rating == null ? 'user-black' : rankClass(rating)}`;
-    return a;
-  };
-  const line = (...nodes: (Node | string)[]) => {
-    const div = document.createElement('div');
-    div.append(...nodes);
-    return div;
-  };
-  const muted = (t: string) => {
-    const s = document.createElement('span');
-    s.style.color = 'var(--cfx-text-muted)';
-    s.textContent = t;
-    return s;
-  };
-  const out: Node[] = [];
-  if (!progress.total) {
-    out.push(line(muted('Add friends on Codeforces, or add handles in CF+ settings, to see who solved this.')));
-  } else {
-    if (solved.length) {
-      out.push(line(`${solved.length} of your friends solved this:`));
-      for (const f of solved) {
-        const base = f.contestId != null && f.contestId >= 100000 ? '/gym' : '/contest';
-        const href = f.submissionId ? `${base}/${f.contestId}/submission/${f.submissionId}` : `/profile/${f.handle}`;
-        out.push(line(userLink(f.handle, f.rating, href), muted(` ${f.inContest ? 'in contest' : 'practice'}, ${fmtDate(f.at)}`)));
-      }
-    } else out.push(line(muted('None of your friends has solved this yet.')));
-    if (tried.length) {
-      const l = line(muted('Tried: '));
-      tried.forEach((f, i) => l.append(...(i ? [', '] : []), userLink(f.handle, f.rating)));
-      out.push(l);
-    }
-    if (progress.synced < progress.total) out.push(line(muted(`Syncing friends: ${progress.synced} of ${progress.total}…`)));
-  }
-  body.replaceChildren(...out);
 }
 
 function findSidebox(re: RegExp): HTMLElement | null {
@@ -223,6 +110,45 @@ function findSidebox(re: RegExp): HTMLElement | null {
     if (re.test(cap.textContent ?? '')) return cap.closest('.roundbox');
   }
   return null;
+}
+
+/** CF's own "Problem tags" box, for problems that have no tags yet. */
+function createTagsBox(): HTMLElement | null {
+  const sidebar = document.querySelector(SEL.sidebar);
+  if (!sidebar) return null;
+  const box = document.createElement('div');
+  box.className = 'roundbox sidebox borderTopRound';
+  const caption = document.createElement('div');
+  caption.className = 'caption titled';
+  caption.textContent = '→ Problem tags';
+  const body = document.createElement('div');
+  body.style.padding = '0.5em';
+  const clear = document.createElement('div');
+  clear.style.clear = 'both';
+  body.append(clear);
+  box.append(caption, body);
+  sidebar.append(box);
+  return box;
+}
+
+/** "≈1700" as one more tag, styled like CF's "*1700" difficulty tag. */
+function addEstimateTag(tagsBox: HTMLElement, rating: number) {
+  const tag = document.createElement('span');
+  tag.className = 'tag-box cfx-estimate-tag';
+  tag.style.fontSize = '1.2rem';
+  tag.textContent = `≈${rating}`;
+  tag.title = 'Estimated difficulty (CF+). Disappears once Codeforces rates this problem.';
+  // CF wraps each tag in its own floated roundbox; copy that wrapper's look.
+  const sibling = tagsBox.querySelector('.tag-box')?.parentElement;
+  const wrap = sibling ? (sibling.cloneNode(false) as HTMLElement) : document.createElement('div');
+  if (!sibling) {
+    wrap.className = 'roundbox borderTopRound borderBottomRound';
+    wrap.setAttribute('style', 'margin:2px; padding:0 3px 2px 3px; float:left;');
+  }
+  wrap.append(tag);
+  const list = sibling?.parentElement ?? tagsBox.lastElementChild ?? tagsBox;
+  const clear = [...list.children].find((el) => (el as HTMLElement).style.clear === 'both') ?? null;
+  list.insertBefore(wrap, clear);
 }
 
 export default defineContentScript({
@@ -235,58 +161,55 @@ export default defineContentScript({
     'https://*.codeforces.com/gym/*/problem/*',
   ],
   runAt: 'document_end',
-  async main() {
+  async main(ctx) {
     const id = parseProblemUrl();
-    const header = document.querySelector('.problem-statement .header');
-    if (!id || !header) return;
+    const statement = document.querySelector(SEL.statement);
+    if (!id || !statement) return;
     const settings = await getSettings();
-    state.set({ spoiler: settings.spoilerFree });
-    onSettingsChanged((p) => p.spoilerFree !== undefined && state.set({ spoiler: p.spoilerFree }));
 
-    // Rating from the sidebar "*1400" tag; editorial from "Contest materials".
-    let rating: number | null = null;
-    for (const tag of document.querySelectorAll<HTMLElement>(SEL.tagBox)) {
-      const m = tag.textContent?.trim().match(/^\*(\d{3,4})$/);
-      if (m) rating = Number(m[1]);
+    if (settings.stopwatch) {
+      // Top-right corner of the statement, level with the problem title.
+      const host = mountShadow(statement, 'afterbegin', <Stopwatch problemKey={problemKey(id)} />, 'cfx-stopwatch');
+      Object.assign(host.style, { float: 'right', position: 'relative', zIndex: '1', marginLeft: '8px' });
     }
-    const materials = findSidebox(/contest materials|материалы/i);
-    const editorial =
-      [...(materials?.querySelectorAll<HTMLAnchorElement>('a') ?? [])].find((a) => /tutorial|editorial|разбор/i.test(a.textContent ?? ''))?.href ?? null;
 
-    // Spoiler-free sidebar tags.
-    const tagsBox = findSidebox(/problem tags|теги задачи/i);
-    if (tagsBox) {
-      tagsBox.classList.add('cfx-spoiler-tags');
+    // Official difficulty is the sidebar "*1400" tag.
+    const rated = [...document.querySelectorAll<HTMLElement>(SEL.tagBox)].some((t) => /^\*\d{3,4}$/.test(t.textContent?.trim() ?? ''));
+
+    let tagsBox = findSidebox(/problem tags|теги задачи/i);
+    const makeSpoilerFree = (box: HTMLElement) => {
+      box.classList.add('cfx-spoiler-tags');
       const chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'cfx-reveal';
       chip.textContent = 'show';
-      chip.addEventListener('click', () => (tagsBox.dataset.cfxRevealed = '1'));
-      tagsBox.querySelector('.caption')?.appendChild(chip);
-    }
+      chip.addEventListener('click', () => (box.dataset.cfxRevealed = '1'));
+      box.querySelector('.caption')?.appendChild(chip);
+    };
+    if (tagsBox) makeSpoilerFree(tagsBox);
+    let solved = false;
 
-    if (settings.problemTools) {
-      mountShadow(
-        header,
-        'afterend',
-        <Toolbar cid={id.contestId} index={id.index} rating={rating} editorial={editorial} inContest={!location.pathname.startsWith('/problemset')} />,
-        'cfx-problem-tools',
-      );
-    }
-
-    if (rating == null && settings.estimates) {
+    if (!rated && settings.estimates) {
       send({ type: 'problemRatings', contestIds: [id.contestId] })
         .then((r) => {
           const e = r[id.contestId]?.[id.index];
-          if (e) state.set({ estimate: e.rating });
+          if (!e?.estimated || !ctx.isValid) return;
+          if (!tagsBox) {
+            tagsBox = createTagsBox();
+            if (!tagsBox) return;
+            makeSpoilerFree(tagsBox);
+            if (solved) tagsBox.dataset.cfxRevealed = '1';
+          }
+          addEstimateTag(tagsBox, e.rating);
         })
         .catch(() => undefined);
     }
-    if (settings.friends) void mountFriendsBox(id.contestId, id.index);
+    if (settings.friends) void mountFriendsBox(id.contestId, id.index, (cleanup) => ctx.onInvalidated(cleanup));
 
     await loadOwnModel((model) => {
       state.set({ model });
-      if (tagsBox && model.solvedKeys.has(problemKey(id))) tagsBox.dataset.cfxRevealed = '1';
+      solved = model.solvedKeys.has(problemKey(id));
+      if (tagsBox && solved) tagsBox.dataset.cfxRevealed = '1';
     });
   },
 });

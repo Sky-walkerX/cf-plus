@@ -4,9 +4,9 @@ import '../../theme/tokens.css';
 import '../../components/ui.css';
 import '../../components/page.css';
 import { Seg } from '../../components/common';
-import { loadThemeSheets, Setting, Switch, useSettings } from '../../components/settings-ui';
+import { ContestSettings, loadThemeSheets, Setting, Switch, useSettings } from '../../components/settings-ui';
 import { send } from '../../lib/messaging';
-import { setSettings, type HeatmapMode, type Settings, type ThemeMode } from '../../lib/settings';
+import { setSettings, type Settings, type ThemeMode } from '../../lib/settings';
 
 loadThemeSheets();
 
@@ -120,17 +120,6 @@ function Options() {
         <Setting name="Profile analytics" desc="Ratings, tags, unsolved, contests and verdicts below the activity box">
           <Switch label="Profile analytics" checked={s.showAnalytics} onChange={(showAnalytics) => set({ showAnalytics })} />
         </Setting>
-        <Setting name="Default heatmap coloring">
-          <Seg<HeatmapMode>
-            label="Heatmap coloring"
-            value={s.heatmapMode}
-            onChange={(heatmapMode) => set({ heatmapMode })}
-            options={[
-              { value: 'count', label: 'Count' },
-              { value: 'rating', label: 'Rating' },
-            ]}
-          />
-        </Setting>
       </section>
 
       <section class="card" style={{ padding: '4px 16px' }}>
@@ -149,8 +138,8 @@ function Options() {
             ]}
           />
         </Setting>
-        <Setting name="Problem-page toolbar" desc="Rating badge, editorial/status/submit links, practice stopwatch">
-          <Switch label="Problem-page toolbar" checked={s.problemTools} onChange={(problemTools) => set({ problemTools })} />
+        <Setting name="Practice stopwatch" desc="Start/pause timer at the top of each problem; it stops on your first accepted submission and keeps the time">
+          <Switch label="Practice stopwatch" checked={s.stopwatch} onChange={(stopwatch) => set({ stopwatch })} />
         </Setting>
       </section>
 
@@ -161,12 +150,24 @@ function Options() {
         <Setting name="Performance column" desc="The rating at which a result neither gains nor loses rating">
           <Switch label="Performance column" checked={s.predictorPerf} onChange={(predictorPerf) => set({ predictorPerf })} />
         </Setting>
-        <Setting name="Estimated problem ratings" desc="For problems Codeforces hasn't rated yet, shown as ≈1700 once the contest is over">
+        <Setting name="Estimated problem ratings" desc="For problems Codeforces hasn't rated yet, shown as an ≈1700 tag once the contest is over, until Codeforces publishes the real rating">
           <Switch label="Estimated problem ratings" checked={s.estimates} onChange={(estimates) => set({ estimates })} />
         </Setting>
       </section>
 
       <Friends s={s} />
+
+      <section class="card" style={{ padding: '4px 16px' }}>
+        <ContestSettings s={s} />
+      </section>
+      <section class="card" style={{ padding: '4px 16px' }}>
+        <Setting name="Profile previews" desc="Hover or focus a handle to see rating, rank, contribution and friend count">
+          <Switch label="Profile previews" checked={s.profilePreview} onChange={(profilePreview) => set({ profilePreview })} />
+        </Setting>
+        <Setting name="Color my header handle" desc="Use your Codeforces title color, with your rating on hover">
+          <Switch label="Color my header handle" checked={s.colorOwnHandle} onChange={(colorOwnHandle) => set({ colorOwnHandle })} />
+        </Setting>
+      </section>
 
       <section class="card" style={{ padding: '4px 16px' }}>
         <Setting name="Contest reminders" desc="A notification before each Codeforces round">

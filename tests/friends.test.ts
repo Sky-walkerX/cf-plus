@@ -23,8 +23,16 @@ describe('friend index', () => {
     const r = friendsOnProblem([idx, bob], '5-B', new Map([['bob', 1700]]));
     expect(r.solved.map((f) => f.handle)).toEqual(['bob']);
     expect(r.solved[0].rating).toBe(1700);
+    expect(r.solved[0].attempts).toBe(1);
     expect(r.tried.map((f) => f.handle)).toEqual(['alice']);
     expect(friendCounts([idx, bob], ['5-A', '5-B', '6-A'])).toEqual({ '5-A': ['alice'], '5-B': ['bob'] });
+  });
+  it('counts submissions once across overlapping syncs and changing verdicts', () => {
+    const pending = { ...sub({ id: 1, at: '2026-11-08', contestId: 5, index: 'A' }), verdict: 'TESTING' };
+    const index = addSubmissions(emptyIndex('alice'), [pending, pending]);
+    addSubmissions(index, [{ ...pending, verdict: 'OK' }, sub({ id: 2, at: '2026-11-08', contestId: 5, index: 'A', verdict: 'OK' })]);
+    expect(index.attempts?.['5-A']).toBe(2);
+    expect(index.solved['5-A'][1]).toBe(1);
   });
 });
 

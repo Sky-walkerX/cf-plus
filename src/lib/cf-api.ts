@@ -10,7 +10,7 @@ export class CfApiError extends Error {}
 async function call<T>(method: string, params: Record<string, string | number> = {}): Promise<T> {
   const qs = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)]));
   return queue.run(async () => {
-    const res = await fetch(`${API}${method}?${qs}`);
+    const res = await fetch(`${API}${method}?${qs}`, { signal: AbortSignal.timeout(20_000) });
     let body: { status: string; result?: T; comment?: string };
     try {
       body = await res.json();
@@ -65,6 +65,15 @@ export async function userInfo(handle: string): Promise<UserInfo> {
     maxRank: u.maxRank,
     avatar: u.avatar,
     titlePhoto: u.titlePhoto,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    country: u.country,
+    city: u.city,
+    organization: u.organization,
+    contribution: u.contribution,
+    friendOfCount: u.friendOfCount,
+    registrationTimeSeconds: u.registrationTimeSeconds,
+    lastOnlineTimeSeconds: u.lastOnlineTimeSeconds,
   };
 }
 
@@ -103,11 +112,21 @@ export interface StandingsRow {
   solved: boolean[];
   /** true if the party is a team (team contests are unrated) */
   team: boolean;
+  members?: string[];
+  rank?: number;
+  problemResults?: ProblemResult[];
+}
+
+export interface ProblemResult {
+  points: number;
+  rejectedAttemptCount: number;
+  type: 'PRELIMINARY' | 'FINAL';
+  bestSubmissionTimeSeconds?: number;
 }
 
 export interface Standings {
-  contest: { id: number; name: string; phase: string; startTimeSeconds?: number; durationSeconds: number; type: string };
-  problems: { index: string; name: string; rating?: number }[];
+  contest: { id: number; name: string; phase: string; startTimeSeconds?: number; durationSeconds: number; type: string; frozen?: boolean; relativeTimeSeconds?: number };
+  problems: { index: string; name: string; rating?: number; points?: number }[];
   rows: StandingsRow[];
 }
 
@@ -126,12 +145,17 @@ export async function contestStandings(contestId: number): Promise<Standings> {
       startTimeSeconds: r.contest.startTimeSeconds,
       durationSeconds: r.contest.durationSeconds,
       type: r.contest.type,
+      frozen: r.contest.frozen,
+      relativeTimeSeconds: r.contest.relativeTimeSeconds,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    problems: r.problems.map((p: any) => ({ index: p.index, name: p.name, rating: p.rating })),
+    problems: r.problems.map((p: any) => ({ index: p.index, name: p.name, rating: p.rating, points: p.points })),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rows: r.rows.map((row: any) => ({
       handle: row.party.members[0]?.handle ?? '',
+      members: row.party.members.map((m: { handle: string }) => m.handle),
+      rank: row.rank,
+      problemResults: row.problemResults.map((p: ProblemResult) => ({ points: p.points, rejectedAttemptCount: p.rejectedAttemptCount, type: p.type, bestSubmissionTimeSeconds: p.bestSubmissionTimeSeconds })),
       points: row.points,
       penalty: row.penalty,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -139,6 +163,12 @@ export async function contestStandings(contestId: number): Promise<Standings> {
       team: row.party.teamId != null || row.party.teamName != null || row.party.members.length > 1,
     })),
   };
+}
+
+/** Latest personal verdicts, without downloading the user's entire history. */
+export async function contestStatus(contestId: number, handle: string): Promise<Submission[]> {
+  const raw = await call<unknown[]>('contest.status', { contestId, handle, from: 1, count: 100 });
+  return raw.map(trimSubmission);
 }
 
 /** [handle, rank, oldRating, newRating, ratingUpdateTimeSeconds]; null when CF says the contest is unrated. */

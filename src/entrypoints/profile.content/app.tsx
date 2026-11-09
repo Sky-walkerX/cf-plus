@@ -1,7 +1,7 @@
 import { Analytics } from '../../components/Analytics';
-import { Heatmap, ModeSwitch, type HeatmapRange } from '../../components/Heatmap';
+import { Heatmap, type HeatmapRange } from '../../components/Heatmap';
 import type { Model } from '../../lib/model';
-import { setSettings, type Settings } from '../../lib/settings';
+import type { Settings } from '../../lib/settings';
 import { createStore } from '../../lib/store';
 import type { UserBundle } from '../../lib/types';
 
@@ -14,22 +14,16 @@ export const store = createStore<{
   error: string | null;
 }>({ handle: '', settings: null, bundle: null, model: null, range: 'last', error: null });
 
-/** Replaces CF's native grid, inside CF's own activity box. */
+/** Second heatmap, below CF's own grid (which stays: only it knows about private gym activity). */
 export function HeatmapHost() {
-  const { model, settings, range } = store.use();
-  if (!model || !settings) return null;
+  const { model, range } = store.use();
+  if (!model) return null;
   return (
-    <div style={{ margin: '2px 0 6px' }}>
-      <Heatmap days={model.days} mode={settings.heatmapMode} range={range} />
+    <div class="hm-block">
+      <div class="hm-title">By difficulty: hardest problem solved each day</div>
+      <Heatmap days={model.days} activity={model.activity} mode="rating" range={range} />
     </div>
   );
-}
-
-/** Count / Rating switch next to CF's "Choose year" dropdown. */
-export function SwitchHost() {
-  const { model, settings } = store.use();
-  if (!model || !settings) return null;
-  return <ModeSwitch mode={settings.heatmapMode} onChange={(heatmapMode) => setSettings({ heatmapMode })} />;
 }
 
 export function AnalyticsHost() {

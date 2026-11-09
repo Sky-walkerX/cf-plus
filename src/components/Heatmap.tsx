@@ -2,11 +2,12 @@
  * The merged heatmap, drawn like Codeforces' own (square cells, same layout), with two modes:
  *  - count:  CF greens by how many problems were solved
  *  - rating: colour of the day's hardest problem, dimmer on days with fewer solves
+ * Days with submissions but no newly solved problem (only WAs, or re-solves) are drawn hollow,
+ * so breaks in an accepted-every-day streak stay visible.
  */
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { addDays, dayKey, parseDay, type DayBucket } from '../lib/model';
+import { addDays, dayKey, parseDay, type ActivityDay, type DayBucket } from '../lib/model';
 import { bandOf, bandVar } from '../lib/ranks';
-import type { HeatmapMode } from '../lib/settings';
 import { problemUrl } from '../lib/urls';
 
 const CELL = 11;
@@ -16,6 +17,7 @@ const TOP = 14;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export type HeatmapRange = 'last' | number;
+export type HeatmapMode = 'count' | 'rating';
 
 export function cellFill(b: DayBucket | undefined, mode: HeatmapMode): string {
   if (!b) return 'var(--cfx-cell-empty)';
@@ -58,7 +60,7 @@ function layout(range: HeatmapRange, today: string) {
 
 const fmtDay = (d: string) => parseDay(d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
-export function Heatmap(props: { days: Map<string, DayBucket>; mode: HeatmapMode; range: HeatmapRange }) {
+export function Heatmap(props: { days: Map<string, DayBucket>; activity?: Map<string, ActivityDay>; mode: HeatmapMode; range: HeatmapRange }) {
   const today = dayKey(new Date());
   const { cells, cols, months } = useMemo(() => layout(props.range, today), [props.range, today]);
   const width = LEFT + cols * STEP;
@@ -109,6 +111,8 @@ export function Heatmap(props: { days: Map<string, DayBucket>; mode: HeatmapMode
   };
 
   const b = active ? props.days.get(active) : undefined;
+  const act = active ? props.activity?.get(active) : undefined;
+  const triedOnly = (day: string) => !props.days.has(day) && !!props.activity?.has(day);
 
   return (
     <div class="hm" ref={wrap}>
@@ -139,7 +143,7 @@ export function Heatmap(props: { days: Map<string, DayBucket>; mode: HeatmapMode
         ))}
         {cells.map((c) => (
           <rect
-            class={c.day === active ? 'on' : undefined}
+            class={[c.day === active && 'on', triedOnly(c.day) && 'tried'].filter(Boolean).join(' ') || undefined}
             data-day={c.day}
             x={LEFT + c.col * STEP}
             y={TOP + c.row * STEP}
@@ -167,7 +171,8 @@ export function Heatmap(props: { days: Map<string, DayBucket>; mode: HeatmapMode
           onClick={(e) => e.stopPropagation()}
         >
           <div class="t-head">
-            {fmtDay(active)}: {b ? `${b.count} problem${b.count > 1 ? 's' : ''}` : 'no problems'}
+            {fmtDay(active)}: {b ? `${b.count} problem${b.count > 1 ? 's' : ''}` : act ? 'no new problem solved' : 'no problems'}
+            {act && <span class="t-sub"> · {act.submissions} submission{act.submissions > 1 ? 's' : ''}</span>}
           </div>
           {b?.solves.slice(0, 10).map((s) => (
             <div class="t-row">
@@ -179,23 +184,26 @@ export function Heatmap(props: { days: Map<string, DayBucket>; mode: HeatmapMode
             </div>
           ))}
           {b && b.count > 10 && <div class="t-hint">and {b.count - 10} more</div>}
-          {b && !pinned && <div class="t-hint">Click the day to keep this open</div>}
+          {act?.others.slice(0, b ? 4 : 10).map((o) => (
+            <div class="t-row t-other">
+              <b style={{ color: o.accepted ? 'var(--cfx-ok)' : 'var(--cfx-bad)' }} title={o.accepted ? 'Accepted again (already solved before)' : 'Not accepted'}>
+                {o.accepted ? '✓' : '✗'}
+              </b>
+              <a href={problemUrl(o.problem)} target="_blank" rel="noopener">
+                {o.problem.contestId}
+                {o.problem.index}. {o.problem.name}
+              </a>
+            </div>
+          ))}
+          {(b || act) && !pinned && <div class="t-hint">Click the day to keep this open</div>}
+        </div>
+      )}
+      {props.activity && (
+        <div class="hm-legend" aria-hidden="true">
+          <span><i class="hm-key solved" style={{ background: props.mode === 'count' ? 'var(--cfx-count-2)' : bandVar('expert') }} />new problem solved</span>
+          <span><i class="hm-key tried" />submitted, nothing new accepted</span>
         </div>
       )}
     </div>
-  );
-}
-
-/** Count / Rating switch that sits next to CF's "Choose year" dropdown. */
-export function ModeSwitch(props: { mode: HeatmapMode; onChange: (m: HeatmapMode) => void }) {
-  return (
-    <span class="pair" role="group" aria-label="Heatmap coloring">
-      <button type="button" aria-pressed={props.mode === 'count'} onClick={() => props.onChange('count')}>
-        Count
-      </button>
-      <button type="button" aria-pressed={props.mode === 'rating'} onClick={() => props.onChange('rating')}>
-        Rating
-      </button>
-    </span>
   );
 }

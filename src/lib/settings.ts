@@ -2,13 +2,11 @@
 
 /** Default = stock Codeforces white; Slate and Pure dark are CF+ themes. */
 export type ThemeMode = 'light' | 'slate' | 'dark';
-export type HeatmapMode = 'count' | 'rating';
 
 export interface Settings {
   theme: ThemeMode;
   /** How statement images look in dark mode. */
   imageMode: 'card' | 'invert' | 'none';
-  heatmapMode: HeatmapMode;
   /** Hide tags & ratings until solved. */
   spoilerFree: boolean;
   solvedRows: 'show' | 'dim' | 'hide';
@@ -19,7 +17,8 @@ export interface Settings {
   /** Collapsed profile sections, by id. */
   collapsed: Record<string, boolean>;
   showAnalytics: boolean;
-  problemTools: boolean;
+  /** Practice stopwatch at the top of problem statements. */
+  stopwatch: boolean;
   /** Rating changes on standings pages. */
   predictor: boolean;
   /** Also show a performance column on standings. */
@@ -30,12 +29,16 @@ export interface Settings {
   extraFriends: string[];
   /** Estimated ratings for problems Codeforces hasn't rated yet. */
   estimates: boolean;
+  liveRank: boolean;
+  contestPanel: boolean;
+  contestPanelPosition: 'right' | 'top' | 'left';
+  profilePreview: boolean;
+  colorOwnHandle: boolean;
 }
 
 export const DEFAULTS: Settings = {
   theme: 'light',
   imageMode: 'card',
-  heatmapMode: 'rating',
   spoilerFree: false,
   solvedRows: 'show',
   handle: null,
@@ -43,12 +46,17 @@ export const DEFAULTS: Settings = {
   reminderMinutes: 15,
   collapsed: {},
   showAnalytics: true,
-  problemTools: true,
+  stopwatch: true,
   predictor: true,
   predictorPerf: true,
   friends: true,
   extraFriends: [],
   estimates: true,
+  liveRank: true,
+  contestPanel: true,
+  contestPanelPosition: 'right',
+  profilePreview: true,
+  colorOwnHandle: true,
 };
 
 const THEMES: ThemeMode[] = ['light', 'slate', 'dark'];
@@ -57,8 +65,9 @@ const THEMES: ThemeMode[] = ['light', 'slate', 'dark'];
 export function normalize(raw: Record<string, unknown>): Settings {
   const s = { ...DEFAULTS, ...(raw as Partial<Settings>) };
   if (!THEMES.includes(s.theme)) s.theme = DEFAULTS.theme;
-  if (s.heatmapMode !== 'count' && s.heatmapMode !== 'rating') s.heatmapMode = DEFAULTS.heatmapMode;
   if (!Array.isArray(s.extraFriends)) s.extraFriends = [];
+  s.extraFriends = s.extraFriends.filter((h): h is string => typeof h === 'string' && /^[A-Za-z0-9_.-]{1,24}$/.test(h));
+  if (!['right', 'top', 'left'].includes(s.contestPanelPosition)) s.contestPanelPosition = 'right';
   return s;
 }
 
@@ -82,7 +91,10 @@ export function onSettingsChanged(cb: (changed: Partial<Settings>) => void): () 
     if (Object.keys(patch).length) cb(patch);
   };
   chrome.storage.onChanged.addListener(listener);
-  return () => chrome.storage.onChanged.removeListener(listener);
+  return () => {
+    // During an unpacked-extension reload Chrome can remove storage before WXT runs cleanup.
+    try { chrome.storage?.onChanged.removeListener(listener); } catch { /* context already invalidated */ }
+  };
 }
 
 export const nextTheme = (t: ThemeMode): ThemeMode => THEMES[(THEMES.indexOf(t) + 1) % THEMES.length];

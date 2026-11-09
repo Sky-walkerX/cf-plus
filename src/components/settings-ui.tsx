@@ -1,6 +1,6 @@
 import type { ComponentChildren } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import { DEFAULTS, getSettings, onSettingsChanged, type Settings } from '../lib/settings';
+import { DEFAULTS, getSettings, onSettingsChanged, setSettings, type Settings } from '../lib/settings';
 
 /** Live settings for extension pages; also mirrors the theme onto <html data-cfx-theme>. */
 export function useSettings(): Settings {
@@ -34,6 +34,22 @@ export function Setting(props: { name: string; desc?: string; children: Componen
       {props.children}
     </div>
   );
+}
+
+export function ContestSettings({ s }: { s: Settings }) {
+  return <>
+    <Setting name="Live contest rank" desc="Official rank in the header, refreshed every 8 seconds in active contest tabs">
+      <Switch label="Live contest rank" checked={s.liveRank} onChange={(liveRank) => setSettings({ liveRank })} />
+    </Setting>
+    <Setting name="Contest problem panel" desc="Problem links, colored verdicts and points if solved now; points update each minute">
+      <Switch label="Contest problem panel" checked={s.contestPanel} onChange={(contestPanel) => setSettings({ contestPanel })} />
+    </Setting>
+    <Setting name="Panel position" desc="Left docks beside the page on wide screens, above it on smaller screens">
+      <select class="sel" aria-label="Contest panel position" value={s.contestPanelPosition} onChange={(e) => setSettings({ contestPanelPosition: (e.target as HTMLSelectElement).value as Settings['contestPanelPosition'] })}>
+        <option value="right">Right</option><option value="top">Top</option><option value="left">Left</option>
+      </select>
+    </Setting>
+  </>;
 }
 
 /** Load the generated dark token sheets (built by wxt.config.ts) into an extension page. */

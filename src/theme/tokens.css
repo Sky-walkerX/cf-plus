@@ -77,7 +77,6 @@
 :root[data-cfx-solved='hide'] table.problems tr.cfx-solved { display: none; }
 
 /* The CF+ heatmap replaces only the native grid; CF's counters and year selector stay. */
-:root[data-cfx-heatmap='on'] #userActivityGraph { display: none !important; }
 
 /* Reveal chips (spoiler-free mode). */
 .cfx-reveal {
@@ -110,3 +109,60 @@ table.standings .cfx-col { font-size: 1.1rem; }
   opacity: 0.55;
   user-select: none;
 }
+
+/* Native-looking friend table; explicit colors keep all three themes consistent. */
+#cfx-friends-box .caption { padding-bottom: 4px; }
+.cfx-friends-toggle { all: unset; display: block; width: 100%; cursor: pointer; font: inherit; color: inherit; }
+#cfx-friends-box .cfx-friends-toggle { border: 0 !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; color: var(--cfx-caption) !important; font: inherit !important; }
+.cfx-friends-toggle::after { content: '⌄'; float: right; }
+.cfx-friends-toggle[aria-expanded='false']::after { content: '›'; }
+.cfx-friends-toggle:focus-visible { outline: 2px solid var(--cfx-focus); }
+.cfx-friends-scroll { max-height: 310px; overflow: auto; scrollbar-width: thin; }
+.cfx-friends-table { width: 100%; border-collapse: collapse; font: 1.2rem/1.5 var(--cfx-font); text-align: center; }
+.cfx-friends-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+#cfx-friends-box .cfx-friends-table td { border: 1px solid var(--cfx-border); padding: 2px 5px; background: var(--cfx-surface); }
+#cfx-friends-box .cfx-friends-table tr:nth-child(even) td { background: var(--cfx-surface-2); }
+#cfx-friends-box .cfx-friends-table td:first-child { width: 28px; border-left: 0; }
+#cfx-friends-box .cfx-friends-table td:last-child { width: 44px; border-right: 0; }
+.cfx-friends-table td:nth-child(2) a { font-weight: bold; overflow-wrap: anywhere; }
+#cfx-friends-box .cfx-friends-table td:last-child a { color: var(--cfx-text); text-decoration: underline; }
+.cfx-friend-dot { font-size: 12px; }
+.cfx-friend-dot.accepted { color: #59c37b; }
+.cfx-friend-dot.rejected { color: var(--cfx-bad); }
+.cfx-friends-footer { text-align: right; color: var(--cfx-text-muted); padding: 5px 8px; font: 10px/1.5 var(--cfx-font); }
+.cfx-friends-empty { margin: 10px; color: var(--cfx-text-muted); font: 12px/1.6 var(--cfx-font); }
+
+/* Contest navigator and compact header rank. */
+#cfx-live-rank { display: block; width: fit-content; margin: 6px 0 0 auto; padding: 4px 8px; border: 1px solid var(--cfx-border); border-radius: 3px; background: var(--cfx-surface); color: var(--cfx-caption); font: bold 12px/1.4 var(--cfx-font); text-decoration: none; }
+#cfx-contest-panel { background: var(--cfx-surface); color: var(--cfx-text); margin-bottom: 16px; }
+#cfx-contest-panel .caption { color: var(--cfx-caption); }
+.cfx-contest-problems { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px; }
+#cfx-contest-panel .cfx-contest-problem { display: flex; align-items: center; gap: 7px; box-sizing: border-box; min-width: 84px; flex: 1 0 84px; border: 1px solid var(--cfx-border); border-radius: 3px; padding: 6px 8px; background: var(--cfx-surface-2); color: var(--cfx-text); font: 12px/1.4 var(--cfx-font); text-decoration: none; }
+#cfx-contest-panel .cfx-contest-problem[aria-current] { outline: 2px solid var(--cfx-caption); outline-offset: 1px; }
+.cfx-problem-points { margin-left: auto; font-variant-numeric: tabular-nums; }
+#cfx-contest-panel .cfx-contest-problem[data-state='accepted'] { color: var(--cfx-ok); border-color: var(--cfx-ok); }
+#cfx-contest-panel .cfx-contest-problem[data-state='rejected'] { color: var(--cfx-bad); border-color: var(--cfx-bad); }
+#cfx-contest-panel .cfx-contest-problem[data-state='testing'],
+#cfx-contest-panel .cfx-contest-problem[data-state='partial'] { color: var(--cfx-warn); border-color: var(--cfx-warn); }
+.cfx-contest-foot { padding: 0 10px 8px; color: var(--cfx-text-muted); font: 10px/1.5 var(--cfx-font); }
+#cfx-contest-panel[data-position='top'] { position: sticky; top: 8px; z-index: 30; }
+#cfx-contest-panel[data-position='top'] .caption { display: none; }
+@media (min-width: 1600px) {
+  #cfx-contest-panel[data-position='left'] { position: fixed; left: max(10px, calc((100vw - 1200px) / 2 - 180px)); top: 150px; width: 160px; z-index: 30; max-height: calc(100vh - 170px); overflow-y: auto; }
+  #cfx-contest-panel[data-position='left'] .cfx-contest-problem { flex-basis: 100%; }
+}
+
+/* Handle hover card: stays inside the viewport and can be reached with the keyboard. */
+#cfx-profile-preview { position: fixed; z-index: 10000; box-sizing: border-box; width: 292px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto; padding: 14px; border: 1px solid var(--cfx-border); border-radius: 5px; background: var(--cfx-surface); color: var(--cfx-text); box-shadow: var(--cfx-shadow); font: 12px/1.6 var(--cfx-font); text-align: left; }
+#cfx-profile-preview[hidden] { display: none; }
+.cfx-preview-heading { display: flex; align-items: center; gap: 12px; }
+.cfx-preview-heading img { width: 48px; height: 48px; object-fit: cover; border-radius: 3px; }
+.cfx-preview-heading a { font-size: 16px; font-weight: bold; }
+.cfx-preview-muted { color: var(--cfx-text-muted); overflow-wrap: anywhere; }
+#cfx-profile-preview dl { display: grid; grid-template-columns: 1fr 1fr; margin: 12px 0; gap: 4px 12px; }
+#cfx-profile-preview dt { color: var(--cfx-text-muted); }
+#cfx-profile-preview dd { margin: 0; text-align: right; font-weight: bold; }
+.cfx-preview-open { display: block; border-top: 1px solid var(--cfx-border); margin-top: 12px; padding-top: 8px; color: var(--cfx-link); }
+
+/* Estimated difficulty tag on problem pages (only while CF hasn't rated the problem). */
+.cfx-estimate-tag { font-style: italic; }

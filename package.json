@@ -11,7 +11,8 @@
     "compile": "tsc --noEmit",
     "test": "TZ=America/New_York vitest run",
     "postinstall": "wxt prepare",
-    "e2e": "node tests/e2e/run.mjs"
+    "e2e": "node tests/e2e/run.mjs",
+    "preview:contest": "node scripts/preview-contest.mjs"
   },
   "dependencies": {
     "idb-keyval": "^6.3.0",

@@ -68,7 +68,7 @@ page.on('console', (m) => m.type() === 'error' && /chrome-extension:\/\/|CF\+/.t
 const BG = { light: 'rgb(255, 255, 255)', slate: 'rgb(16, 21, 28)', dark: 'rgb(10, 11, 13)' };
 
 for (const theme of ['light', 'slate', 'dark']) {
-  await setSettings({ theme, handle: 'SkywalkerX', spoilerFree: false, imageMode: 'card', heatmapMode: 'rating' });
+  await setSettings({ theme, handle: 'SkywalkerX', spoilerFree: false, imageMode: 'card' });
   await page.waitForTimeout(400); // background re-registers the theme CSS
 
   // ---- profile
@@ -82,18 +82,17 @@ for (const theme of ['light', 'slate', 'dark']) {
   const state = await page.evaluate(() => {
     const canvas = document.querySelector('#usersRatingGraphPlaceholder canvas.flot-base');
     return {
-      nativeHidden: getComputedStyle(document.querySelector('#userActivityGraph')).display === 'none',
+      nativeShown: getComputedStyle(document.querySelector('#userActivityGraph')).display !== 'none',
+      below: !!(document.querySelector('#userActivityGraph').compareDocumentPosition(document.querySelector('#cfx-heatmap')) & Node.DOCUMENT_POSITION_FOLLOWING),
       counters: !!document.querySelector('._UserActivityFrame_footer') && getComputedStyle(document.querySelector('._UserActivityFrame_footer')).display !== 'none',
       cells: document.querySelector('#cfx-heatmap')?.shadowRoot?.querySelectorAll('rect').length ?? 0,
-      switch: document.querySelector('#cfx-heatmap-switch')?.shadowRoot?.querySelectorAll('button').length ?? 0,
       tabs: [...(document.querySelector('#cfx-analytics')?.shadowRoot?.querySelectorAll('.tabs button') ?? [])].map((b) => b.textContent),
       graph: !!canvas && getComputedStyle(document.querySelector('#usersRatingGraphPlaceholder')).display !== 'none',
       bg: getComputedStyle(document.body).backgroundColor,
     };
   });
-  check(`[${theme}] native grid hidden, CF counters kept`, state.nativeHidden && state.counters);
+  check(`[${theme}] CF grid and counters kept, CF+ heatmap below`, state.nativeShown && state.counters && state.below);
   check(`[${theme}] heatmap has a year of cells`, state.cells >= 365, `${state.cells} cells`);
-  check(`[${theme}] Count/Rating switch`, state.switch === 2);
   check(`[${theme}] analytics tabs`, state.tabs.length >= 5, state.tabs.join(' | '));
   check(`[${theme}] CF rating graph kept`, state.graph);
   check(`[${theme}] page background`, state.bg === BG[theme], state.bg);
@@ -124,12 +123,10 @@ for (const theme of ['light', 'slate', 'dark']) {
 
   // ---- problem
   await page.goto(pages.problem.url, { waitUntil: 'domcontentloaded' });
-  const tools = await page.waitForSelector('#cfx-problem-tools', { timeout: 15_000 }).then(
-    () => true,
-    () => false,
-  );
-  check(`[${theme}] problem toolbar mounted`, tools);
+  await page.waitForSelector('#cfx-friends-box', { timeout: 15_000 }).catch(() => undefined);
   await page.waitForTimeout(600);
+  check(`[${theme}] no toolbar above the statement`, await page.evaluate(() => !document.querySelector('#cfx-problem-tools')));
+  check(`[${theme}] stopwatch at the top of the statement`, await page.evaluate(() => document.querySelector('.problem-statement')?.firstElementChild?.id === 'cfx-stopwatch'));
   const tall = await page.evaluate(() => document.documentElement.scrollHeight);
   await page.screenshot({ path: `${out}/problem-${theme}.png`, fullPage: tall < 20000 });
 }

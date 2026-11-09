@@ -5,7 +5,7 @@
   filter: invert(1) hue-rotate(180deg) brightness(1.1);
   mix-blend-mode: lighten;
 }
-.lang-chooser, .lang-chooser a { color: var(--cfx-text-muted) !important; }
+.lang-chooser, .lang-chooser a:not(.rated-user) { color: var(--cfx-text-muted) !important; }
 
 .menu-box, .roundbox.menu-box { background: var(--cfx-surface) !important; border-color: var(--cfx-border) !important; }
 .menu-list li a { color: var(--cfx-text) !important; }

@@ -38,16 +38,22 @@ const idxKey = (h: string) => `fidx:${h.toLowerCase()}`;
 const loadIndex = async (h: string) => (await cacheGet<FriendIndex>(idxKey(h)))?.value ?? null;
 
 async function syncFriend(handle: string): Promise<void> {
-  const prev = await loadIndex(handle);
+  const cached = await loadIndex(handle);
+  const prev = cached?.attempts ? cached : null;
   let idx = prev ?? emptyIndex(handle);
   if (!prev) {
     idx = addSubmissions(idx, await api.userStatus(handle));
   } else {
+    const watermark = prev.settledId;
+    const fresh: Awaited<ReturnType<typeof api.userStatus>> = [];
+    let caughtUp = false;
     for (let page = 0; page < 20; page++) {
       const batch = await api.userStatus(handle, page * PAGE + 1, PAGE);
-      idx = addSubmissions(idx, batch);
-      if (batch.length < PAGE || batch.some((s) => s.id <= prev.settledId)) break;
+      fresh.push(...batch);
+      if (batch.length < PAGE || batch.some((s) => s.id <= watermark)) { caughtUp = true; break; }
     }
+    // Fold together so the submission-count watermark doesn't skip later pages.
+    idx = caughtUp ? addSubmissions(idx, fresh) : addSubmissions(emptyIndex(handle), await api.userStatus(handle));
   }
   idx.syncedAt = Date.now();
   await cacheSet(idxKey(handle), idx);
@@ -63,7 +69,7 @@ export async function syncStaleFriends(limit = 10): Promise<SyncProgress> {
   return once('friends-sync', async () => {
     const friends = await getFriendList();
     const indexes = await Promise.all(friends.map(async (h) => [h, await loadIndex(h)] as const));
-    const stale = indexes.filter(([, i]) => !i || i.syncedAt < Date.now() - STALE).sort((a, b) => (a[1]?.syncedAt ?? 0) - (b[1]?.syncedAt ?? 0));
+    const stale = indexes.filter(([, i]) => !i || !i.attempts || i.syncedAt < Date.now() - STALE).sort((a, b) => (a[1]?.syncedAt ?? 0) - (b[1]?.syncedAt ?? 0));
     for (const [h] of stale.slice(0, limit)) {
       try {
         await syncFriend(h);

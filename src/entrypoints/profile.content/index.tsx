@@ -1,7 +1,7 @@
 /**
- * Profile page: the CF+ heatmap replaces only CF's native grid (CF's box, counters and year
- * dropdown stay), a Count/Rating switch sits next to "Choose year", and the analytics box goes
- * below the activity box. CF's rating graph is left in place (recoloured by rating-graph.content).
+ * Profile page: CF's own activity grid stays (it is the only source for private gym activity);
+ * the CF+ difficulty heatmap goes below it inside the same box, following CF's year dropdown.
+ * The analytics box goes below the activity box. CF's rating graph is left in place (recoloured by rating-graph.content).
  */
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { mountShadow } from '../../components/mount';
@@ -10,7 +10,7 @@ import { buildModel } from '../../lib/model';
 import { send } from '../../lib/messaging';
 import { getSettings, onSettingsChanged } from '../../lib/settings';
 import type { UserBundle } from '../../lib/types';
-import { AnalyticsHost, HeatmapHost, store, SwitchHost } from './app';
+import { AnalyticsHost, HeatmapHost, store } from './app';
 
 export default defineContentScript({
   matches: ['https://codeforces.com/profile/*', 'https://*.codeforces.com/profile/*'],
@@ -27,17 +27,10 @@ export default defineContentScript({
     const frame = document.querySelector(SEL.activityFrame);
 
     if (graph) {
-      mountShadow(graph, 'beforebegin', <HeatmapHost />, 'cfx-heatmap');
-
-      const selector = document.querySelector(SEL.activityYearSelector);
-      const header = document.querySelector(SEL.activityHeader);
-      const switchHost = selector
-        ? mountShadow(selector, 'afterbegin', <SwitchHost />, 'cfx-heatmap-switch')
-        : header && mountShadow(header, 'beforeend', <SwitchHost />, 'cfx-heatmap-switch');
-      if (switchHost) Object.assign(switchHost.style, { display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' });
+      mountShadow(document.querySelector(SEL.activityFooter) ?? graph, 'afterend', <HeatmapHost />, 'cfx-heatmap');
 
       // CF's own year dropdown drives the CF+ heatmap too.
-      const year = selector?.querySelector<HTMLSelectElement>('select');
+      const year = document.querySelector(SEL.activityYearSelector)?.querySelector<HTMLSelectElement>('select');
       year?.addEventListener('change', () => store.set({ range: year.value ? Number(year.value) : 'last' }));
     }
 

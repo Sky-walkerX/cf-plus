@@ -39,6 +39,15 @@ export interface UserInfo {
   maxRank?: string;
   avatar?: string;
   titlePhoto?: string;
+  firstName?: string;
+  lastName?: string;
+  country?: string;
+  city?: string;
+  organization?: string;
+  contribution?: number;
+  friendOfCount?: number;
+  registrationTimeSeconds?: number;
+  lastOnlineTimeSeconds?: number;
 }
 
 export interface Contest {

@@ -11,21 +11,30 @@ export interface FriendIndex {
   /** newest submission id with a final verdict */
   settledId: number;
   syncedAt: number;
+  /** Submission counts, including failed attempts. Optional for old cached indexes. */
+  attempts?: Record<string, number>;
+  countedThrough?: number;
 }
 
 const IN_CONTEST = new Set(['CONTESTANT', 'OUT_OF_COMPETITION', 'VIRTUAL']);
 const IGNORE = new Set(['COMPILATION_ERROR', 'SKIPPED', 'TESTING', undefined]);
 
 export function emptyIndex(handle: string): FriendIndex {
-  return { handle, solved: {}, tried: {}, settledId: 0, syncedAt: 0 };
+  return { handle, solved: {}, tried: {}, settledId: 0, syncedAt: 0, attempts: {}, countedThrough: 0 };
 }
 
 /** Fold submissions (any order) into an index. Idempotent. */
 export function addSubmissions(idx: FriendIndex, subs: Submission[]): FriendIndex {
   const sorted = [...subs].sort((a, b) => a.creationTimeSeconds - b.creationTimeSeconds || a.id - b.id);
+  const watermark = idx.countedThrough ?? 0;
+  const seen = new Set<number>();
+  idx.attempts ??= {};
   for (const s of sorted) {
     if (s.problem.contestId == null) continue;
     const key = problemKey(s.problem);
+    if (s.id > watermark && !seen.has(s.id)) idx.attempts[key] = (idx.attempts[key] ?? 0) + 1;
+    seen.add(s.id);
+    idx.countedThrough = Math.max(idx.countedThrough ?? 0, s.id);
     if (s.verdict === 'OK') {
       const cur = idx.solved[key];
       if (!cur || s.creationTimeSeconds < cur[0]) {
@@ -47,6 +56,7 @@ export interface FriendOnProblem {
   submissionId?: number;
   contestId?: number;
   inContest?: boolean;
+  attempts?: number;
 }
 
 export function friendsOnProblem(indexes: FriendIndex[], key: string, ratings: Map<string, number | undefined>) {
@@ -54,8 +64,8 @@ export function friendsOnProblem(indexes: FriendIndex[], key: string, ratings: M
   const tried: FriendOnProblem[] = [];
   for (const idx of indexes) {
     const s = idx.solved[key];
-    if (s) solved.push({ handle: idx.handle, rating: ratings.get(idx.handle), at: s[0], submissionId: s[1], contestId: s[2], inContest: s[3] === 1 });
-    else if (idx.tried[key]) tried.push({ handle: idx.handle, rating: ratings.get(idx.handle), at: idx.tried[key] });
+    if (s) solved.push({ handle: idx.handle, rating: ratings.get(idx.handle), at: s[0], submissionId: s[1], contestId: s[2], inContest: s[3] === 1, attempts: idx.attempts?.[key] });
+    else if (idx.tried[key]) tried.push({ handle: idx.handle, rating: ratings.get(idx.handle), at: idx.tried[key], attempts: idx.attempts?.[key] });
   }
   solved.sort((a, b) => a.at - b.at);
   tried.sort((a, b) => b.at - a.at);

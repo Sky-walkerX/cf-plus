@@ -22,12 +22,12 @@ export function once<T>(key: string, fn: () => Promise<T>): Promise<T> {
 
 // ---------------------------------------------------------------- standings
 
-export async function getStandings(contestId: number): Promise<api.Standings> {
+export async function getStandings(contestId: number, live = false): Promise<api.Standings> {
   const key = `standings:${contestId}`;
   const c = await cacheGet<api.Standings>(key);
   if (c) {
     const phase = c.value.contest.phase;
-    const ttl = phase === 'FINISHED' ? DAY : phase === 'CODING' ? MIN : 5 * MIN;
+    const ttl = live ? 7_000 : phase === 'FINISHED' ? DAY : phase === 'CODING' ? MIN : 5 * MIN;
     if (c.age < ttl) return c.value;
   }
   return once(key, async () => {
@@ -36,7 +36,7 @@ export async function getStandings(contestId: number): Promise<api.Standings> {
       await cacheSet(key, s);
       return s;
     } catch (e) {
-      if (c) return c.value;
+      if (c && !live) return c.value;
       throw e;
     }
   });

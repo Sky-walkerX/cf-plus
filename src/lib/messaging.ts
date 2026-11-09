@@ -3,6 +3,8 @@ import type { ContestRatings } from './estimates-service';
 import type { FriendOnProblem } from './friends';
 import type { PredictRequest, PredictResponse } from './predictor-service';
 import type { Contest, ProblemsetProblem, UserBundle } from './types';
+import type { UserInfo } from './types';
+import type { LiveContest } from './live-contest';
 
 export interface FriendsOnProblemResponse {
   solved: FriendOnProblem[];
@@ -11,6 +13,8 @@ export interface FriendsOnProblemResponse {
 }
 
 export type Request =
+  | { type: 'profilePreview'; handle: string }
+  | { type: 'liveContest'; contestId: number; handle: string }
   | { type: 'user'; handle: string; refresh: boolean }
   | { type: 'problemset'; refresh?: boolean }
   | { type: 'contests'; refresh?: boolean }
@@ -24,7 +28,9 @@ export type Request =
   | { type: 'friendList' }
   | { type: 'syncFriends' };
 
-export type ResponseFor<R extends Request> = R extends { type: 'user' }
+export type ResponseFor<R extends Request> = R extends { type: 'profilePreview' } ? UserInfo
+  : R extends { type: 'liveContest' } ? LiveContest
+  : R extends { type: 'user' }
   ? UserBundle | null
   : R extends { type: 'problemset' }
     ? ProblemsetProblem[]

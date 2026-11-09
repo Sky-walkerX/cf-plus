@@ -9,6 +9,7 @@ import { predictForPage } from '../lib/predictor-service';
 import { handle, type Request } from '../lib/messaging';
 import { getSettings, nextTheme, onSettingsChanged, setSettings, type ThemeMode } from '../lib/settings';
 import type { Contest } from '../lib/types';
+import { getLiveContest, getProfilePreview } from '../lib/live-service';
 
 /** Register the chosen theme's stylesheet at document_start so pages never flash white. */
 async function registerTheme(theme: ThemeMode) {
@@ -128,6 +129,10 @@ export default defineBackground(() => {
 
   handle<Request>(async (req) => {
     switch (req.type) {
+      case 'profilePreview':
+        return getProfilePreview(req.handle);
+      case 'liveContest':
+        return getLiveContest(req.contestId, req.handle);
       case 'user':
         return getUser(req.handle, req.refresh);
       case 'problemset':

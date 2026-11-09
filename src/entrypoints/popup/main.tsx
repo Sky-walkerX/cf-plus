@@ -5,12 +5,13 @@ import '../../components/ui.css';
 import '../../components/page.css';
 import './popup.css';
 import { Seg } from '../../components/common';
-import { loadThemeSheets, Setting, Switch, useSettings } from '../../components/settings-ui';
+import { ContestSettings, loadThemeSheets, Setting, Switch, useSettings } from '../../components/settings-ui';
 import { send } from '../../lib/messaging';
 import { activitySummary, buildModel, dayKey } from '../../lib/model';
 import { bandOf, bandVar } from '../../lib/ranks';
 import { setSettings, type Settings, type ThemeMode } from '../../lib/settings';
 import type { Contest, UserBundle } from '../../lib/types';
+import { avatarSrc } from '../../lib/urls';
 
 loadThemeSheets();
 
@@ -69,7 +70,9 @@ function Me({ s }: { s: Settings }) {
   return (
     <div>
       <div class="row">
-        {info?.avatar && <img class="avatar" src={info.avatar} alt="" referrerpolicy="no-referrer" onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')} />}
+        {avatarSrc(info?.avatar) && (
+          <img class="avatar" src={avatarSrc(info?.avatar)!} alt="" onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')} />
+        )}
         <div class="grow">
           <a class="handle" href={`https://codeforces.com/profile/${s.handle}`} target="_blank" style={{ color: bandVar(bandOf(info?.rating)) }}>
             {info?.handle ?? s.handle}
@@ -189,6 +192,12 @@ function Popup() {
         </Setting>
         <Setting name="Contest reminders" desc={`Notify ${s.reminderMinutes} min before start`}>
           <Switch label="Contest reminders" checked={s.remindersEnabled} onChange={(remindersEnabled) => setSettings({ remindersEnabled })} />
+        </Setting>
+      </section>
+      <section class="block">
+        <ContestSettings s={s} />
+        <Setting name="Profile previews">
+          <Switch label="Profile previews" checked={s.profilePreview} onChange={(profilePreview) => setSettings({ profilePreview })} />
         </Setting>
       </section>
       <footer class="row">

@@ -35,10 +35,20 @@ export interface DayBucket {
   maxRating?: number;
 }
 
+/** Every day with at least one submission, solved or not. */
+export interface ActivityDay {
+  day: string;
+  submissions: number;
+  /** Problems submitted that day that were not newly solved that day (WAs, re-solves). */
+  others: { problem: Problem; accepted: boolean }[];
+}
+
 export interface Model {
   solves: Solve[];
   attempted: Attempted[];
   days: Map<string, DayBucket>;
+  /** Superset of `days`: also days with only rejected submissions or re-solves. */
+  activity: Map<string, ActivityDay>;
   solvedKeys: Set<string>;
   attemptedKeys: Set<string>;
   submissions: Submission[];
@@ -143,7 +153,24 @@ export function buildModel(submissions: Submission[]): Model {
   }
   for (const b of days.values()) b.solves.sort((x, y) => (y.rating ?? -1) - (x.rating ?? -1));
 
-  return { solves, attempted, days, solvedKeys, attemptedKeys, submissions: subs };
+  const activity = new Map<string, ActivityDay>();
+  const othersByDay = new Map<string, Map<string, { problem: Problem; accepted: boolean }>>();
+  for (const s of subs) {
+    if (s.verdict === 'TESTING') continue;
+    const day = dayKeyFromSeconds(s.creationTimeSeconds);
+    let a = activity.get(day);
+    if (!a) activity.set(day, (a = { day, submissions: 0, others: [] }));
+    a.submissions++;
+    const key = problemKey(s.problem);
+    if (days.get(day)?.solves.some((x) => x.key === key)) continue;
+    let others = othersByDay.get(day);
+    if (!others) othersByDay.set(day, (others = new Map()));
+    const prev = others.get(key);
+    others.set(key, { problem: s.problem, accepted: !!prev?.accepted || s.verdict === 'OK' });
+  }
+  for (const [day, others] of othersByDay) activity.get(day)!.others = [...others.values()];
+
+  return { solves, attempted, days, activity, solvedKeys, attemptedKeys, submissions: subs };
 }
 
 // ---------- streaks & totals ----------

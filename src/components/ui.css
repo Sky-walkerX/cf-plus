@@ -60,22 +60,6 @@ a { color: var(--cfx-link); }
 .note { font-size: 11px; color: var(--cfx-text-faint); margin-bottom: 8px; }
 
 /* ---------- small controls ---------- */
-.pair { display: inline-flex; vertical-align: middle; }
-.pair button {
-  all: unset;
-  cursor: pointer;
-  font-family: var(--cfx-font);
-  font-size: 12px;
-  line-height: 16px;
-  padding: 1px 9px;
-  border: 1px solid var(--cfx-border-strong);
-  background: var(--cfx-field);
-  color: var(--cfx-text-muted);
-}
-.pair button:first-child { border-radius: 3px 0 0 3px; border-right: 0; }
-.pair button:last-child { border-radius: 0 3px 3px 0; }
-.pair button[aria-pressed='true'] { background: var(--cfx-surface-3); color: var(--cfx-text); font-weight: 700; }
-.pair button:focus-visible { outline: 2px solid var(--cfx-focus); }
 .linkbtn {
   all: unset;
   cursor: pointer;
@@ -118,10 +102,17 @@ a { color: var(--cfx-link); }
 
 /* ---------- heatmap ---------- */
 .hm { position: relative; }
+.hm-block { margin: 10px 0 6px; padding-top: 8px; border-top: 1px solid var(--cfx-border); }
+.hm-title { margin-bottom: 4px; color: var(--cfx-text-muted); font: 600 11.5px/1.4 var(--cfx-font); }
 .hm svg { width: 100%; height: auto; display: block; overflow: visible; }
 .hm text { fill: var(--cfx-text-faint); font-size: 9px; font-family: var(--cfx-font); }
 .hm rect { cursor: pointer; }
+.hm rect.tried { stroke: var(--cfx-text-faint); stroke-width: 1.2; }
 .hm rect.on { stroke: var(--cfx-text); stroke-width: 1; }
+.hm-legend { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; color: var(--cfx-text-faint); font: 10.5px/1.4 var(--cfx-font); }
+.hm-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.hm-key { display: inline-block; width: 9px; height: 9px; border-radius: 2px; }
+.hm-key.tried { box-sizing: border-box; background: var(--cfx-cell-empty); border: 1.2px solid var(--cfx-text-faint); }
 .hm svg:focus-visible { outline: none; }
 .hm svg:focus-visible rect.on { stroke: var(--cfx-focus); stroke-width: 1.5; }
 
@@ -140,6 +131,7 @@ a { color: var(--cfx-link); }
 }
 .tip.pinned { pointer-events: auto; }
 .tip .t-head { font-weight: 700; margin-bottom: 3px; }
+.tip .t-sub { font-weight: 400; color: var(--cfx-text-muted); }
 .tip .t-row { display: flex; gap: 8px; padding: 1px 0; max-width: 340px; }
 .tip .t-row b { min-width: 34px; }
 .tip .t-row a { overflow: hidden; text-overflow: ellipsis; }
