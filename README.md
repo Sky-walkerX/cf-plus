@@ -17,7 +17,7 @@ A Chrome (MV3) extension for Codeforces:
 - **Estimated problem ratings:** "≈1700" for problems Codeforces hasn't rated yet, shown only after the coding phase. The estimate is the rating at which a contestant solves the problem half the time, fitted from the standings.
 - **Practice tab** (your own profile): recommendations at your rating +100 to +300 in your weakest tags, problems you tried but never solved, and unsolved problems from contests you entered.
 - **Spoiler-free mode:** hides tags and ratings until you solve the problem, with per-problem reveal. Solved rows can be shown, dimmed or hidden.
-- **Practice stopwatch:** at the top-right of each problem statement. Start it when you begin; it stops on your first accepted submission and shows "Solved in mm:ss".
+- **Practice stopwatch:** on its own line under each problem's title. Start it when you begin; it stops on your first accepted submission and shows "Solved in mm:ss".
 - **Estimated difficulty tag:** on problems Codeforces hasn't rated yet, an `≈1700` tag appears in the sidebar's Problem tags box. It goes away once the official `*rating` tag is published.
 - **Popup:** your rating and streak, upcoming contests with countdowns and add-to-Google-Calendar links, plus contest reminder notifications.
 

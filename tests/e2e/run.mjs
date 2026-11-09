@@ -126,7 +126,7 @@ for (const theme of ['light', 'slate', 'dark']) {
   await page.waitForSelector('#cfx-friends-box', { timeout: 15_000 }).catch(() => undefined);
   await page.waitForTimeout(600);
   check(`[${theme}] no toolbar above the statement`, await page.evaluate(() => !document.querySelector('#cfx-problem-tools')));
-  check(`[${theme}] stopwatch at the top of the statement`, await page.evaluate(() => document.querySelector('.problem-statement')?.firstElementChild?.id === 'cfx-stopwatch'));
+  check(`[${theme}] stopwatch right under the title`, await page.evaluate(() => document.querySelector('.problem-statement .header .title')?.nextElementSibling?.id === 'cfx-stopwatch'));
   const tall = await page.evaluate(() => document.documentElement.scrollHeight);
   await page.screenshot({ path: `${out}/problem-${theme}.png`, fullPage: tall < 20000 });
 }

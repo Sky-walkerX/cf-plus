@@ -83,7 +83,7 @@ function Stopwatch(props: { problemKey: string }) {
   const timer = useTimer(props.problemKey, solved ? (solve?.firstAcAt ?? Date.now() / 1000) * 1000 : null);
   if (!timer.ready) return null;
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', margin: '4px 0', fontSize: '12px' }}>
       {timer.doneMs != null ? (
         <span class="muted num" title="Time from starting the stopwatch to your first accepted submission">
           ⏱ Solved in {fmt(timer.doneMs)}
@@ -101,7 +101,7 @@ function Stopwatch(props: { problemKey: string }) {
           <Icon d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" />
         </button>
       )}
-    </span>
+    </div>
   );
 }
 
@@ -168,9 +168,9 @@ export default defineContentScript({
     const settings = await getSettings();
 
     if (settings.stopwatch) {
-      // Top-right corner of the statement, level with the problem title.
-      const host = mountShadow(statement, 'afterbegin', <Stopwatch problemKey={problemKey(id)} />, 'cfx-stopwatch');
-      Object.assign(host.style, { float: 'right', position: 'relative', zIndex: '1', marginLeft: '8px' });
+      // Its own centered line, right under the problem title.
+      const title = statement.querySelector(SEL.statementTitle) ?? statement.querySelector('.header');
+      if (title) mountShadow(title, 'afterend', <Stopwatch problemKey={problemKey(id)} />, 'cfx-stopwatch');
     }
 
     // Official difficulty is the sidebar "*1400" tag.
